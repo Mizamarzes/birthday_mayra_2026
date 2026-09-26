@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>[NOMBRE] ★ LOVE QUEST: BIRTHDAY EDITION (16-BIT RETRO ARCADE)</title>
+  
+  <!-- Retro Pixel Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Silkscreen:wght@400;700&family=VT323&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            arcade: {
+              bg: '#0a0512',
+              cabinet: '#1a0b2e',
+              bezel: '#281347',
+              screen: '#120824',
+              primary: '#ff2a5f',
+              secondary: '#ff5c93',
+              pink: '#ff85b3',
+              pastel: '#ffd1dc',
+              gold: '#ffbe0b',
+              neonGreen: '#00f5a0',
+              cyan: '#00e5ff',
+              darkBorder: '#000000',
+            }
+          },
+          fontFamily: {
+            pixelTitle: ['"Press Start 2P"', 'monospace', 'cursive'],
+            pixelUi: ['"Silkscreen"', '"Press Start 2P"', 'monospace'],
+            pixelText: ['"VT323"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Reset & Base pixel styling */
+    * {
+      image-rendering: pixelated;
+      box-sizing: border-box;
+      -webkit-font-smoothing: none;
+    }
+
+    body {
+      background-color: #07030d;
+      color: #ffd1dc;
+      font-family: 'Silkscreen', monospace;
+      overflow-x: hidden;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* CRT Scanlines Overlay */
+    .crt-overlay::before {
+      content: " ";
+      display: block;
+      position: fixed;
+      top: 0; left: 0; bottom: 0; right: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+      z-index: 60;
+      background-size: 100% 4px, 6px 100%;
+      pointer-events: none;
+      opacity: 0.85;
+    }
+
+    /* Subtle CRT screen curved vignette */
+    .crt-overlay::after {
+      content: " ";
+      display: block;
+      position: fixed;
+      top: 0; left: 0; bottom: 0; right: 0;
+      background: radial-gradient(circle at center, transparent 65%, rgba(0, 0, 0, 0.65) 100%);
+      z-index: 61;
+      pointer-events: none;
+    }
+
+    /* Arcade Pixel Borders & Hard Shadows (No blur!) */
+    .pixel-box {
+      border: 4px solid #000;
+      box-shadow: 4px 4px 0px #000, -2px -2px 0px #ff5c93 inset, 2px 2px 0px #381254 inset;
+      background-color: #160a2b;
+    }
+
+    .pixel-box-gold {
+      border: 4px solid #000;
+      box-shadow: 4px 4px 0px #000, -2px -2px 0px #ffe169 inset, 2px 2px 0px #855f00 inset;
+      background-color: #2b1800;
+    }
+
+    .pixel-box-inset {
+      border: 4px solid #000;
+      box-shadow: inset 4px 4px 0px #000, inset -2px -2px 0px #ff2a5f;
+      background-color: #0d041c;
+    }
+
+    .pixel-btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 4px solid #000;
+      box-shadow: 4px 4px 0px #000, inset -4px -4px 0px #a60032, inset 4px 4px 0px #ff94ba;
+      background: #ff2a5f;
+      color: #fff;
+      font-family: 'Press Start 2P', monospace;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.05s ease;
+    }
+
+    .pixel-btn:hover {
+      background: #ff4777;
+    }
+
+    .pixel-btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0px #000, inset -2px -2px 0px #a60032, inset 2px 2px 0px #ff94ba;
+    }
+
+    .pixel-btn-secondary {
+      border: 4px solid #000;
+      box-shadow: 4px 4px 0px #000, inset -4px -4px 0px #240c42, inset 4px 4px 0px #b269ff;
+      background: #5b21b6;
+      color: #ffd1dc;
+    }
+    .pixel-btn-secondary:hover {
+      background: #7028db;
+    }
+    .pixel-btn-secondary:active {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0px #000;
+    }
+
+    .pixel-btn-gold {
+      border: 4px solid #000;
+      box-shadow: 4px 4px 0px #000, inset -4px -4px 0px #946900, inset 4px 4px 0px #fff275;
+      background: #ffbe0b;
+      color: #000;
+    }
+    .pixel-btn-gold:hover {
+      background: #ffd000;
+    }
+
+    /* Pixel Badge / Glow item effect */
+    .rare-item-glow {
+      position: relative;
+    }
+    .rare-item-glow:hover {
+      transform: scale(1.02);
+      box-shadow: 0 0 0 4px #000, 0 0 16px #ffbe0b, 6px 6px 0px #000;
+    }
+
+    /* Custom Animations */
+    @keyframes blink {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+    .animate-pixel-blink {
+      animation: blink 0.9s infinite step-end;
+    }
+
+    @keyframes floatPixel {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+    .animate-float {
+      animation: floatPixel 3s infinite steps(4, jump-none);
+    }
+
+    @keyframes pulseScore {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); color: #ffbe0b; }
+      100% { transform: scale(1); }
+    }
+    .animate-score-pop {
+      animation: pulseScore 0.5s ease;
+    }
+
+    /* Floating retro particles background */
+    .pixel-star {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background-color: #ffd1dc;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+
+    /* Hide scrollbars for retro look */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0d041c;
+      border-left: 2px solid #000;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #ff2a5f;
+      border: 2px solid #000;
+    }
+
+    /* Dialogue box cursor animation */
+    @keyframes bounceArrow {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(4px); }
+    }
+    .dialogue-arrow {
+      animation: bounceArrow 0.6s infinite steps(2, jump-none);
+    }
+  </style>
+</head>
+<body class="crt-overlay min-h-screen flex flex-col items-center p-2 sm:p-4 md:p-6 lg:p-8 bg-[#080311]">
+
+  <!-- Retro Sound Effects (Vanilla Web Audio API Synthesizer - Zero dependencies) -->
+  <script>
+    // Audio synthesizer for authentic 8-bit sound effects (Beeps, Jumps, Wins, Buzzers)
+    let audioCtx = null;
+    function getAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function playSound(type) {
+      try {
+        const ctx = getAudioContext();
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        if (type === 'select') {
+          // Clean 8-bit chirp
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.setValueAtTime(880, now + 0.05);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+          osc.start(now);
+          osc.stop(now + 0.15);
+        } else if (type === 'start') {
+          // Arcade Coin / Start fanfare
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(330, now);
+          osc.frequency.setValueAtTime(392, now + 0.08);
+          osc.frequency.setValueAtTime(659, now + 0.16);
+          osc.frequency.setValueAtTime(523, now + 0.24);
+          osc.frequency.setValueAtTime(587, now + 0.32);
+          osc.frequency.setValueAtTime(783, now + 0.40);
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+          osc.start(now);
+          osc.stop(now + 0.6);
+        } else if (type === 'correct') {
+          // Zelda item / 1-UP jingle
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(523.25, now); // C5
+          osc.frequency.setValueAtTime(659.25, now + 0.09); // E5
+          osc.frequency.setValueAtTime(783.99, now + 0.18); // G5
+          osc.frequency.setValueAtTime(1046.50, now + 0.27); // C6
+          gain.gain.setValueAtTime(0.16, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+          osc.start(now);
+          osc.stop(now + 0.45);
+        } else if (type === 'wrong') {
+          // 8-bit hurt buzzer
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(180, now);
+          osc.frequency.setValueAtTime(110, now + 0.12);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+          osc.start(now);
+          osc.stop(now + 0.35);
+        } else if (type === 'win') {
+          // Victory fanfare
+          const notes = [440, 440, 440, 554, 659, 880];
+          notes.forEach((freq, idx) => {
+            const o = ctx.createOscillator();
+            const g = ctx.createGain();
+            o.type = 'square';
+            o.connect(g);
+            g.connect(ctx.destination);
+            o.frequency.value = freq;
+            const startTime = now + (idx * 0.11);
+            g.gain.setValueAtTime(0.15, startTime);
+            g.gain.exponentialRampToValueAtTime(0.001, startTime + 0.18);
+            o.start(startTime);
+            o.stop(startTime + 0.2);
+          });
+        }
+      } catch (e) {
+        // Fallback silently if audio context is blocked
+      }
+    }
+  </script>
+
+  <!-- MASTER ARCADE CABINET FRAME CONTAINER -->
+  <div class="relative w-full max-w-5xl bg-[#140824] border-[6px] md:border-[10px] border-[#000] shadow-[0_0_0_4px_#3d1a6d,12px_12px_0px_#000] rounded-none z-10 my-2 overflow-hidden">
+    
+    <!-- Cabinet Top Header Bezel (Arcade Marquee Lights) -->
+    <header class="bg-[#1f0b3b] border-b-4 border-black px-4 py-3 flex flex-wrap items-center justify-between gap-3 select-none">
+      <!-- Left side: Cabinet Title & Player Info -->
+      <div class="flex items-center space-x-3">
+        <div class="w-4 h-4 bg-[#ff2a5f] animate-pixel-blink border border-black shadow-[1px_1px_0_#fff]"></div>
+        <div class="flex flex-col">
+          <span class="text-[10px] text-arcade-pink tracking-widest font-pixelUi">CABINET #1994</span>
+          <span class="text-xs md:text-sm font-pixelTitle text-white tracking-wider flex items-center gap-1.5">
+            1P: <span class="text-arcade-gold">[NOMBRE]</span>
+            <span class="text-[10px] px-1.5 py-0.5 bg-[#ff2a5f] text-white border border-black ml-1">LVL 99</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Center: Retro HUD Score / High Score -->
+      <div class="flex items-center gap-4 text-xs font-pixelUi bg-[#0d041c] px-3 py-1.5 border-2 border-black">
+        <div>
+          <span class="text-[#ff5c93] text-[9px] block">HIGH SCORE</span>
+          <span class="text-white font-pixelTitle text-[11px] tracking-wider">999999</span>
+        </div>
+        <div class="border-l-2 border-[#2b104a] pl-4">
+          <span class="text-arcade-gold text-[9px] block">AMOR SCORE</span>
+          <span id="hud-score" class="text-arcade-neonGreen font-pixelTitle text-[11px] tracking-wider">10000</span>
+        </div>
+      </div>
+
+      <!-- Quick Audio Toggle & Jump Navigation Menu -->
+      <div class="flex items-center gap-2">
+        <button onclick="playSound('select')" class="px-2.5 py-1 text-[10px] bg-[#2d1257] hover:bg-[#431b80] text-arcade-pastel border-2 border-black font-pixelUi shadow-[2px_2px_0_#000]">
+          🔊 SFX ON
+        </button>
+        <a href="#game-section" onclick="playSound('select')" class="px-2.5 py-1 text-[10px] bg-[#ff2a5f] hover:bg-[#ff4777] text-white border-2 border-black font-pixelUi shadow-[2px_2px_0_#000]">
+          🎮 JUGAR
+        </a>
+      </div>
+    </header>
+
+    <!-- CRT Screen Bezel Glow Inner Border -->
+    <div class="p-3 sm:p-6 md:p-8 bg-[#110620] relative">
+
+      <!-- ========================================== -->
+      <!-- 1. PANTALLA DE INICIO ("START SCREEN") -->
+      <!-- ========================================== -->
+      <section id="start-screen" class="relative min-h-[580px] md:min-h-[640px] flex flex-col items-center justify-between py-10 px-4 pixel-box-inset text-center overflow-hidden mb-12">
+        
+        <!-- Animated floating pixel hearts & stars background -->
+        <div class="absolute inset-0 pointer-events-none overflow-hidden opacity-40">
+          <span class="pixel-star top-10 left-12 animate-pixel-blink"></span>
+          <span class="pixel-star top-24 right-20 animate-pixel-blink" style="animation-delay: 0.3s"></span>
+          <span class="pixel-star bottom-28 left-24 animate-pixel-blink" style="animation-delay: 0.6s"></span>
+          <span class="pixel-star bottom-12 right-16 animate-pixel-blink" style="animation-delay: 0.2s"></span>
+          <!-- Pixel Heart SVGs floating -->
+          <svg class="absolute top-16 left-1/4 w-8 h-8 opacity-60 animate-float" viewBox="0 0 16 16" fill="#ff2a5f">
+            <path d="M2 3h4v2H2zM10 3h4v2h-4zM1 5h14v3H1zM2 8h12v2H2zM4 10h8v2H4zM6 12h4v2H6zM7 14h2v1H7z"/>
+          </svg>
+          <svg class="absolute bottom-20 right-1/4 w-10 h-10 opacity-50 animate-float" style="animation-delay: 1.5s;" viewBox="0 0 16 16" fill="#ff70a6">
+            <path d="M2 3h4v2H2zM10 3h4v2h-4zM1 5h14v3H1zM2 8h12v2H2zM4 10h8v2H4zM6 12h4v2H6zM7 14h2v1H7z"/>
+          </svg>
+          <svg class="absolute top-1/2 left-8 w-6 h-6 opacity-40 animate-float" style="animation-delay: 2.2s;" viewBox="0 0 16 16" fill="#ffbe0b">
+            <path d="M7 1h2v3H7zM3 4h10v2H3zM1 6h14v3H1zM3 9h10v2H3zM5 11h6v2H5zM7 13h2v2H7z"/>
+          </svg>
+        </div>
+
+        <!-- Upper Banner: Insert Coin / Birthday Edition -->
+        <div class="relative z-10 w-full flex items-center justify-between border-b-2 border-[#301657] pb-3 text-xs md:text-sm font-pixelUi">
+          <span class="text-arcade-gold tracking-widest animate-pixel-blink">★ SPECIAL EVENT ★</span>
+          <span class="text-arcade-pastel">INSERT COIN [01/01]</span>
+          <span class="text-arcade-neonGreen">FREE PLAY</span>
+        </div>
+
+        <!-- Central Title Group: Pixel Art Logo -->
+        <div class="relative z-10 my-auto py-6 flex flex-col items-center">
+          
+          <!-- Pixel Birthday Cake / Chest Badge -->
+          <div class="mb-4 inline-block p-2 bg-[#21093b] border-2 border-black shadow-[3px_3px_0_#ff2a5f] animate-float">
+            <div class="flex items-center gap-2 px-3 py-1">
+              <span class="text-lg">🎂</span>
+              <span class="text-xs md:text-sm text-arcade-gold font-pixelTitle tracking-wider">¡FELIZ CUMPLEAÑOS!</span>
+              <span class="text-lg">💖</span>
+            </div>
+          </div>
+
+          <!-- Main Pixel Title -->
+          <h1 class="text-2xl sm:text-4xl md:text-5xl font-pixelTitle text-white tracking-widest drop-shadow-[0_4px_0_#000] leading-relaxed uppercase">
+            <span class="text-arcade-pastel block text-lg sm:text-2xl md:text-3xl mb-2 text-[#ff94ba]">[NOMBRE]</span>
+            <span class="text-transparent bg-clip-text bg-gradient-to-b from-[#ffffff] via-[#ffd1dc] to-[#ff2a5f] filter drop-shadow-[4px_4px_0_#000]">
+              LOVE QUEST
+            </span>
+          </h1>
+
+          <div class="mt-4 flex items-center justify-center gap-2">
+            <span class="h-1 w-8 bg-arcade-primary inline-block"></span>
+            <p class="font-pixelUi text-xs sm:text-sm text-arcade-gold tracking-[0.2em] uppercase font-bold">
+              ★ 16-BIT ROMANTIC EDITION (AÑO 2025) ★
+            </p>
+            <span class="h-1 w-8 bg-arcade-primary inline-block"></span>
+          </div>
+
+          <!-- Narrative RPG Intro Box -->
+          <div class="mt-8 max-w-xl bg-[#090314]/90 border-4 border-black p-4 text-center shadow-[4px_4px_0_#ff5c93]">
+            <p class="font-pixelText text-lg sm:text-xl text-[#ffd1dc] leading-tight">
+              &quot;Una misión legendaria dedicada a la jugadora más especial del mundo.
+              Completá los niveles, desbloqueá nuestros recuerdos y superá la trivia para recibir tu regalo final.&quot;
+            </p>
+          </div>
+
+          <!-- Blinking PRESS START / TOCÁ PARA JUGAR Button -->
+          <div class="mt-8 flex flex-col sm:flex-row items-center gap-4">
+            <a href="#album-section" onclick="playSound('start')" class="pixel-btn text-xs sm:text-sm md:text-base px-6 sm:px-8 py-4 tracking-widest animate-pixel-blink">
+              ▶ PRESS START / TOCÁ PARA JUGAR
+            </a>
+          </div>
+          <span class="mt-3 text-[10px] text-gray-400 font-pixelUi">O deslizá hacia abajo con tu joystick ↓</span>
+        </div>
+
+        <!-- Start Screen Bottom Bar: Credits & Copyright -->
+        <div class="relative z-10 w-full pt-4 border-t-2 border-[#301657] flex flex-col sm:flex-row items-center justify-between gap-2 text-[10px] text-arcade-pink font-pixelUi">
+          <span>PLAYER 1: [NOMBRE] ★ PLAYER 2: TU NOVIO</span>
+          <span>© 199X-2025 LOVE QUEST CORP. ALL RIGHTS RESERVED.</span>
+        </div>
+      </section>
+
+
+      <!-- ========================================== -->
+      <!-- 2. GALERÍA — ÁLBUM DE ITEMS / LOGROS -->
+      <!-- ========================================== -->
+      <section id="album-section" class="mb-14 scroll-mt-6">
+        
+        <!-- Section Arcade Banner -->
+        <div class="flex items-center gap-3 mb-6 bg-[#1a0a33] p-3 border-4 border-black shadow-[4px_4px_0_#000]">
+          <div class="w-8 h-8 bg-arcade-primary flex items-center justify-center border-2 border-black text-white font-pixelTitle text-sm">
+            🏆
+          </div>
+          <div>
+            <h2 class="text-sm sm:text-base md:text-lg font-pixelTitle text-white uppercase tracking-wider">
+              ÁLBUM DE LOGROS DESBLOQUEADOS
+            </h2>
+            <p class="text-xs text-arcade-pastel font-pixelUi">
+              Colección de ítems legendarios de nuestra historia juntos (Toca para inspeccionar)
+            </p>
+          </div>
+          <div class="ml-auto hidden sm:flex items-center gap-1.5 text-xs text-arcade-gold font-pixelUi">
+            <span>6/6 ITEMS</span>
+            <span class="w-3 h-3 bg-arcade-gold inline-block border border-black"></span>
+          </div>
+        </div>
+
+        <!-- Grid de Items / Trofeos -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          
+          <!-- Item 1: Primera Cita -->
+          <div class="pixel-box p-3 rare-item-glow transition-all duration-150 cursor-pointer group" onclick="playSound('select')">
+            <div class="flex items-center justify-between mb-2 pb-1 border-b-2 border-black text-[11px] font-pixelUi">
+              <span class="text-arcade-gold font-bold">ITEM #001</span>
+              <span class="bg-[#2a0e4a] text-arcade-neonGreen px-1.5 py-0.5 border border-black text-[9px]">RARITY: SSS</span>
+            </div>
+            <!-- Photo Frame Container -->
+            <div class="relative w-full aspect-square bg-[#0b0417] border-4 border-black overflow-hidden flex flex-col items-center justify-center text-center p-4">
+              <!-- Placeholder Graphic / User image slot -->
+              <div class="w-16 h-16 mb-2 border-2 border-dashed border-[#ff5c93] flex items-center justify-center bg-[#1d0936]">
+                <span class="text-2xl">☕</span>
+              </div>
+              <span class="font-pixelTitle text-xs text-white mb-1">[FOTO 1: PRIMERA CITA]</span>
+              <span class="font-pixelUi text-[10px] text-gray-400">Reemplazar con nuestra foto</span>
+              <div class="absolute top-2 right-2 px-1.5 py-0.5 bg-black/80 border border-arcade-gold text-[9px] text-arcade-gold">
+                ★ DESBLOQUEADO
+              </div>
+            </div>
+            <!-- Item Lore Label -->
+            <div class="mt-3 bg-[#0d041c] p-2 border-2 border-black">
+              <h3 class="text-xs font-pixelTitle text-[#ff70a6] mb-1">EL DÍA QUE EMPEZÓ TODO</h3>
+              <p class="font-pixelText text-base text-gray-300 leading-tight">
+                &quot;Los nervios más hermosos del mundo, un café compartido y risas interminables.&quot;
+              </p>
+              <div class="mt-1 text-[9px] text-arcade-gold font-pixelUi flex justify-between">
+                <span>EXP: +500 PTS</span>
+                <span>STATUS: INOLVIDABLE</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 2: Primer Viaje -->
+          <div class="pixel-box p-3 rare-item-glow transition-all duration-150 cursor-pointer group" onclick="playSound('select')">
+            <div class="flex items-center justify-between mb-2 pb-1 border-b-2 border-black text-[11px] font-pixelUi">
+              <span class="text-arcade-gold font-bold">ITEM #002</span>
+              <span class="bg-[#2a0e4a] text-arcade-cyan px-1.5 py-0.5 border border-black text-[9px]">RARITY: EPIC</span>
+            </div>
+            <div class="relative w-full aspect-square bg-[#0b0417] border-4 border-black overflow-hidden flex flex-col items-center justify-center text-center p-4">
+              <div class="w-16 h-16 mb-2 border-2 border-dashed border-arcade-cyan flex items-center justify-center bg-[#071f30]">
+                <span class="text-2xl">✈️</span>
+              </div>
+              <span class="font-pixelTitle text-xs text-white mb-1">[FOTO 2: PRIMER VIAJE]</span>
+              <span class="font-pixelUi text-[10px] text-gray-400">Reemplazar con nuestra foto</span>
+              <div class="absolute top-2 right-2 px-1.5 py-0.5 bg-black/80 border border-arcade-gold text-[9px] text-arcade-gold">
+                ★ DESBLOQUEADO
+              </div>
+            </div>
+            <div class="mt-3 bg-[#0d041c] p-2 border-2 border-black">
+              <h3 class="text-xs font-pixelTitle text-[#ff70a6] mb-1">EXPEDICIÓN JUNTOS</h3>
+              <p class="font-pixelText text-base text-gray-300 leading-tight">
+                &quot;Perdidos en una ciudad nueva pero con la brújula perfecta en tus manos.&quot;
+              </p>
+              <div class="mt-1 text-[9px] text-arcade-gold font-pixelUi flex justify-between">
+                <span>EXP: +750 PTS</span>
+                <span>STATUS: AVENTURA</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 3: Concierto / Noche Épica -->
+          <div class="pixel-box p-3 rare-item-glow transition-all duration-150 cursor-pointer group" onclick="playSound('select')">
+            <div class="flex items-center justify-between mb-2 pb-1 border-b-2 border-black text-[11px] font-pixelUi">
+              <span class="text-arcade-gold font-bold">ITEM #003</span>
+              <span class="bg-[#2a0e4a] text-arcade-pink px-1.5 py-0.5 border border-black text-[9px]">RARITY: RARE</span>
+            </div>
+            <div class="relative w-full aspect-square bg-[#0b0417] border-4 border-black overflow-hidden flex flex-col items-center justify-center text-center p-4">
+              <div class="w-16 h-16 mb-2 border-2 border-dashed border-arcade-pink flex items-center justify-center bg-[#290a2a]">
+                <span class="text-2xl">🎸</span>
+              </div>
+              <span class="font-pixelTitle text-xs text-white mb-1">[FOTO 3: NOCHE ÉPICA]</span>
+              <span class="font-pixelUi text-[10px] text-gray-400">Reemplazar con nuestra foto</span>
+              <div class="absolute top-2 right-2 px-1.5 py-0.5 bg-black/80 border border-arcade-gold text-[9px] text-arcade-gold">
+                ★ DESBLOQUEADO
+              </div>
+            </div>
+            <div class="mt-3 bg-[#0d041c] p-2 border-2 border-black">
+              <h3 class="text-xs font-pixelTitle text-[#ff70a6] mb-1">BANDA SONORA</h3>
+              <p class="font-pixelText text-base text-gray-300 leading-tight">
+                &quot;Cantando desafinados a todo pulmón en el show de nuestras vidas.&quot;
+              </p>
+              <div class="mt-1 text-[9px] text-arcade-gold font-pixelUi flex justify-between">
+                <span>EXP: +600 PTS</span>
+                <span>STATUS: EN SINTONÍA</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 4: Tarde de Pelis / Relax -->
+          <div class="pixel-box p-3 rare-item-glow transition-all duration-150 cursor-pointer group" onclick="playSound('select')">
+            <div class="flex items-center justify-between mb-2 pb-1 border-b-2 border-black text-[11px] font-pixelUi">
+              <span class="text-arcade-gold font-bold">ITEM #004</span>
+              <span class="bg-[#2a0e4a] text-arcade-pastel px-1.5 py-0.5 border border-black text-[9px]">RARITY: COMMON</span>
+            </div>
+            <div class="relative w-full aspect-square bg-[#0b0417] border-4 border-black overflow-hidden flex flex-col items-center justify-center text-center p-4">
+              <div class="w-16 h-16 mb-2 border-2 border-dashed border-purple-400 flex items-center justify-center bg-[#1a0e30]">
+                <span class="text-2xl">🍿</span>
+              </div>
+              <span class="font-pixelTitle text-xs text-white mb-1">[FOTO 4: DOMINGOS]</span>
+              <span class="font-pixelUi text-[10px] text-gray-400">Reemplazar con nuestra foto</span>
+              <div class="absolute top-2 right-2 px-1.5 py-0.5 bg-black/80 border border-arcade-gold text-[9px] text-arcade-gold">
+                ★ DESBLOQUEADO
+              </div>
+            </div>
+            <div class="mt-3 bg-[#0d041c] p-2 border-2 border-black">
+              <h3 class="text-xs font-pixelTitle text-[#ff70a6] mb-1">REFUGIO CÁLIDO</h3>
+              <p class="font-pixelText text-base text-gray-300 leading-tight">
+                &quot;Cero planes, mil abrazos, pizza fría y tu cabeza apoyada en mi hombro.&quot;
+              </p>
+              <div class="mt-1 text-[9px] text-arcade-gold font-pixelUi flex justify-between">
+                <span>EXP: +450 PTS</span>
+                <span>STATUS: HOGAR</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 5: Momento Gracioso / Desastre Culinario -->
+          <div class="pixel-box p-3 rare-item-glow transition-all duration-150 cursor-pointer group" onclick="playSound('select')">
+            <div class="flex items-center justify-between mb-2 pb-1 border-b-2 border-black text-[11px] font-pixelUi">
+              <span class="text-arcade-gold font-bold">ITEM #005</span>
+              <span class="bg-[#2a0e4a] text-arcade-gold px-1.5 py-0.5 border border-black text-[9px]">RARITY: SPECIAL</span>
+            </div>
+            <div class="relative w-full aspect-square bg-[#0b0417] border-4 border-black overflow-hidden flex flex-col items-center justify-center text-center p-4">
+              <div class="w-16 h-16 mb-2 border-2 border-dashed border-arcade-gold flex items-center justify-center bg-[#291e03]">
+                <span class="text-2xl">🍝</span>
+              </div>
+              <span class="font-pixelTitle text-xs text-white mb-1">[FOTO 5: RISAS]</span>
+              <span class="font-pixelUi text-[10px] text-gray-400">Reemplazar con nuestra foto</span>
+              <div class="absolute top-2 right-2 px-1.5 py-0.5 bg-black/80 border border-arcade-gold text-[9px] text-arcade-gold">
+                ★ DESBLOQUEADO
+              </div>
+            </div>
+            <div class="mt-3 bg-[#0d041c] p-2 border-2 border-black">
+              <h3 class="text-xs font-pixelTitle text-[#ff70a6] mb-1">COCINEROS AMATEUR</h3>
+              <p class="font-pixelText text-base text-gray-300 leading-tight">
+                &quot;Esa receta que salió desastrosa pero terminó siendo la cena más divertida.&quot;
+              </p>
+              <div class="mt-1 text-[9px] text-arcade-gold font-pixelUi flex justify-between">
+                <span>EXP: +550 PTS</span>
+                <span>STATUS: TENTADAS</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 6: Foto Favorita de Ella -->
+          <div class="pixel-box p-3 rare-item-glow transition-all duration-150 cursor-pointer group" onclick="playSound('select')">
+            <div class="flex items-center justify-between mb-2 pb-1 border-b-2 border-black text-[11px] font-pixelUi">
+              <span class="text-arcade-gold font-bold">ITEM #006</span>
+              <span class="bg-[#2a0e4a] text-[#ff2a5f] px-1.5 py-0.5 border border-black text-[9px]">RARITY: LEGENDARY</span>
+            </div>
+            <div class="relative w-full aspect-square bg-[#0b0417] border-4 border-black overflow-hidden flex flex-col items-center justify-center text-center p-4">
+              <div class="w-16 h-16 mb-2 border-2 border-dashed border-[#ff2a5f] flex items-center justify-center bg-[#360817]">
+                <span class="text-2xl">👑</span>
+              </div>
+              <span class="font-pixelTitle text-xs text-white mb-1">[FOTO 6: TU SONRISA]</span>
+              <span class="font-pixelUi text-[10px] text-gray-400">Reemplazar con nuestra foto</span>
+              <div class="absolute top-2 right-2 px-1.5 py-0.5 bg-black/80 border border-arcade-gold text-[9px] text-arcade-gold">
+                ★ DESBLOQUEADO
+              </div>
+            </div>
+            <div class="mt-3 bg-[#0d041c] p-2 border-2 border-black">
+              <h3 class="text-xs font-pixelTitle text-[#ff70a6] mb-1">MI JUGADORA FAVORITA</h3>
+              <p class="font-pixelText text-base text-gray-300 leading-tight">
+                &quot;Esa foto espontánea donde tenés la sonrisa más radiante de todo el mapa.&quot;
+              </p>
+              <div class="mt-1 text-[9px] text-arcade-gold font-pixelUi flex justify-between">
+                <span>EXP: +9999 PTS</span>
+                <span>STATUS: PERFECTA</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+
+      <!-- ========================================== -->
+      <!-- 3. LÍNEA DE TIEMPO — MAPA DE NIVELES (WORLD MAP) -->
+      <!-- ========================================== -->
+      <section id="map-section" class="mb-14 scroll-mt-6">
+        
+        <!-- Header Map Banner -->
+        <div class="flex items-center gap-3 mb-6 bg-[#1a0a33] p-3 border-4 border-black shadow-[4px_4px_0_#000]">
+          <div class="w-8 h-8 bg-arcade-gold flex items-center justify-center border-2 border-black text-black font-pixelTitle text-sm">
+            🗺️
+          </div>
+          <div>
+            <h2 class="text-sm sm:text-base md:text-lg font-pixelTitle text-white uppercase tracking-wider">
+              MAPA DE NIVELES: NUESTRO RECORRIDO
+            </h2>
+            <p class="text-xs text-arcade-pastel font-pixelUi">
+              Estilo World Map clásico de plataformas. Cada hito superado juntos.
+            </p>
+          </div>
+        </div>
+
+        <!-- Interactive Map Container (16-bit style platform trail) -->
+        <div class="pixel-box-inset p-4 sm:p-6 md:p-8 relative overflow-hidden bg-[#0c051a]">
+          
+          <!-- Background pixel grid pattern -->
+          <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#ff5c93_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none"></div>
+
+          <!-- Connecting Track Line (Desktop horizontal, mobile vertical) -->
+          <div class="hidden md:block absolute top-1/2 left-12 right-12 h-3 bg-[#241042] border-y-2 border-black -translate-y-1/2 z-0">
+            <!-- Animated glowing progress track -->
+            <div class="h-full bg-gradient-to-r from-arcade-primary via-arcade-gold to-arcade-neonGreen w-full"></div>
+          </div>
+
+          <!-- World Map Nodes Grid -->
+          <div class="relative z-10 grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-4">
+            
+            <!-- WORLD 1-1 -->
+            <div class="flex flex-col items-center text-center group cursor-pointer" onclick="playSound('select')">
+              <!-- World Level Flag -->
+              <span class="font-pixelUi text-[10px] text-arcade-gold bg-black px-2 py-0.5 border border-arcade-gold mb-2 shadow-[2px_2px_0_#000]">
+                MUNDO 1-1
+              </span>
+              <!-- Pixel Sprite Icon Node -->
+              <div class="w-16 h-16 bg-[#ff2a5f] border-4 border-black shadow-[4px_4px_0_#000] flex items-center justify-center transform group-hover:-translate-y-1 transition-transform">
+                <span class="text-2xl">🌱</span>
+              </div>
+              <!-- Level Info Box -->
+              <div class="mt-3 pixel-box p-3 w-full max-w-[200px] bg-[#1a0b30]">
+                <span class="text-[10px] text-arcade-neonGreen font-pixelUi block">[HITO 1 - FECHA]</span>
+                <h4 class="font-pixelTitle text-xs text-white my-1">EL COMIENZO</h4>
+                <p class="font-pixelText text-sm text-gray-300 leading-tight">
+                  &quot;El primer 'hola' y la chispa que encendió esta aventura.&quot;
+                </p>
+                <div class="mt-2 text-[9px] text-arcade-gold font-pixelUi">★ CLEARED</div>
+              </div>
+            </div>
+
+            <!-- WORLD 1-2 -->
+            <div class="flex flex-col items-center text-center group cursor-pointer" onclick="playSound('select')">
+              <span class="font-pixelUi text-[10px] text-arcade-gold bg-black px-2 py-0.5 border border-arcade-gold mb-2 shadow-[2px_2px_0_#000]">
+                MUNDO 1-2
+              </span>
+              <div class="w-16 h-16 bg-arcade-pink border-4 border-black shadow-[4px_4px_0_#000] flex items-center justify-center transform group-hover:-translate-y-1 transition-transform">
+                <span class="text-2xl">💖</span>
+              </div>
+              <div class="mt-3 pixel-box p-3 w-full max-w-[200px] bg-[#1a0b30]">
+                <span class="text-[10px] text-arcade-neonGreen font-pixelUi block">[HITO 2 - FECHA]</span>
+                <h4 class="font-pixelTitle text-xs text-white my-1">OFICIALMENTE NOVIOS</h4>
+                <p class="font-pixelText text-sm text-gray-300 leading-tight">
+                  &quot;El beso bajo la lluvia y la decisión más hermosa: caminar a la par.&quot;
+                </p>
+                <div class="mt-2 text-[9px] text-arcade-gold font-pixelUi">★ CLEARED</div>
+              </div>
+            </div>
+
+            <!-- WORLD 1-3 -->
+            <div class="flex flex-col items-center text-center group cursor-pointer" onclick="playSound('select')">
+              <span class="font-pixelUi text-[10px] text-arcade-gold bg-black px-2 py-0.5 border border-arcade-gold mb-2 shadow-[2px_2px_0_#000]">
+                MUNDO 1-3
+              </span>
+              <div class="w-16 h-16 bg-[#a855f7] border-4 border-black shadow-[4px_4px_0_#000] flex items-center justify-center transform group-hover:-translate-y-1 transition-transform">
+                <span class="text-2xl">🗝️</span>
+              </div>
+              <div class="mt-3 pixel-box p-3 w-full max-w-[200px] bg-[#1a0b30]">
+                <span class="text-[10px] text-arcade-neonGreen font-pixelUi block">[HITO 3 - FECHA]</span>
+                <h4 class="font-pixelTitle text-xs text-white my-1">NUESTRA LLAVE</h4>
+                <p class="font-pixelText text-sm text-gray-300 leading-tight">
+                  &quot;Armando juntos un espacio que se siente 100% como nuestro hogar.&quot;
+                </p>
+                <div class="mt-2 text-[9px] text-arcade-gold font-pixelUi">★ CLEARED</div>
+              </div>
+            </div>
+
+            <!-- WORLD 1-4 (BOSS CASTLE) -->
+            <div class="flex flex-col items-center text-center group cursor-pointer" onclick="playSound('select')">
+              <span class="font-pixelUi text-[10px] text-[#ffbe0b] bg-black px-2 py-0.5 border border-[#ffbe0b] mb-2 shadow-[2px_2px_0_#000] animate-pulse">
+                ★ HOY ★
+              </span>
+              <div class="w-16 h-16 bg-arcade-gold border-4 border-black shadow-[4px_4px_0_#000] flex items-center justify-center transform group-hover:-translate-y-1 transition-transform">
+                <span class="text-2xl">🏰</span>
+              </div>
+              <div class="mt-3 pixel-box-gold p-3 w-full max-w-[200px]">
+                <span class="text-[10px] text-arcade-gold font-pixelUi block">[HITO 4 - FECHA]</span>
+                <h4 class="font-pixelTitle text-xs text-white my-1">TU CUMPLEAÑOS</h4>
+                <p class="font-pixelText text-sm text-arcade-pastel leading-tight">
+                  &quot;Celebrando un año más de tu vida y todo el futuro por delante.&quot;
+                </p>
+                <div class="mt-2 text-[9px] text-arcade-neonGreen font-pixelUi animate-pixel-blink">▶ EN JUEGO</div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Bottom map caption -->
+          <div class="mt-6 text-center text-xs text-gray-400 font-pixelUi">
+            <span class="text-arcade-gold">CONSEJO RETRO:</span> Cada hito desbloqueó un bonus permanente de complicidad y risas infinitas.
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ========================================== -->
+      <!-- 4. EL JUEGO — TRIVIA CON BARRA DE VIDAS -->
+      <!-- ========================================== -->
+      <section id="game-section" class="mb-14 scroll-mt-6">
+        
+        <!-- Header Trivia Banner -->
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4 bg-[#1a0a33] p-3 border-4 border-black shadow-[4px_4px_0_#000]">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-[#ff2a5f] flex items-center justify-center border-2 border-black text-white font-pixelTitle text-sm">
+              🎮
+            </div>
+            <div>
+              <h2 class="text-sm sm:text-base md:text-lg font-pixelTitle text-white uppercase tracking-wider">
+                MINIJUEGO: ¿CUÁNTO ME CONOCÉS?
+              </h2>
+              <p class="text-xs text-arcade-pastel font-pixelUi">
+                Respondé la trivia para ganar el regalo. ¡Cuidado con tus corazones!
+              </p>
+            </div>
+          </div>
+
+          <!-- Zelda Style 3 Pixel Heart Life Bar -->
+          <div class="flex items-center gap-2 bg-[#090314] px-4 py-2 border-2 border-black">
+            <span class="text-[10px] text-arcade-gold font-pixelTitle mr-1">VIDAS:</span>
+            <div id="heart-container" class="flex items-center gap-1.5">
+              <!-- Pixel Heart 1 -->
+              <svg id="heart-1" class="w-6 h-6 transition-all duration-300" viewBox="0 0 16 16" fill="#ff2a5f">
+                <path d="M2 3h4v2H2zM10 3h4v2h-4zM1 5h14v3H1zM2 8h12v2H2zM4 10h8v2H4zM6 12h4v2H6zM7 14h2v1H7z"/>
+              </svg>
+              <!-- Pixel Heart 2 -->
+              <svg id="heart-2" class="w-6 h-6 transition-all duration-300" viewBox="0 0 16 16" fill="#ff2a5f">
+                <path d="M2 3h4v2H2zM10 3h4v2h-4zM1 5h14v3H1zM2 8h12v2H2zM4 10h8v2H4zM6 12h4v2H6zM7 14h2v1H7z"/>
+              </svg>
+              <!-- Pixel Heart 3 -->
+              <svg id="heart-3" class="w-6 h-6 transition-all duration-300" viewBox="0 0 16 16" fill="#ff2a5f">
+                <path d="M2 3h4v2H2zM10 3h4v2h-4zM1 5h14v3H1zM2 8h12v2H2zM4 10h8v2H4zM6 12h4v2H6zM7 14h2v1H7z"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Trivia Gameplay Arena Card -->
+        <div id="trivia-arena" class="pixel-box p-4 sm:p-6 md:p-8 bg-[#150729] relative overflow-hidden">
+          
+          <!-- Score pop animation banner (shows up on correct / wrong) -->
+          <div id="feedback-banner" class="hidden absolute top-4 left-1/2 -translate-x-1/2 z-30 px-6 py-2 border-4 border-black font-pixelTitle text-sm tracking-wider shadow-[4px_4px_0_#000]">
+            <!-- Dynamic feedback text inserted by JS -->
+          </div>
+
+          <!-- Progress indicators & Round count -->
+          <div class="flex items-center justify-between text-xs font-pixelUi mb-4 pb-2 border-b-2 border-black">
+            <span id="question-counter" class="text-arcade-gold font-bold">PREGUNTA 1 DE 5</span>
+            <div class="flex items-center gap-2">
+              <span class="text-gray-400">PUNTAJE:</span>
+              <span id="game-score" class="text-arcade-neonGreen font-pixelTitle text-sm">0</span>
+            </div>
+          </div>
+
+          <!-- Main Question Box (Retro RPG Dialogue Box) -->
+          <div class="relative bg-[#070212] border-4 border-black p-4 sm:p-6 shadow-[inset_4px_4px_0_#000] mb-6">
+            <!-- RPG Speaker Badge -->
+            <div class="absolute -top-3 left-4 bg-arcade-primary border-2 border-black px-3 py-0.5 text-[10px] text-white font-pixelTitle">
+              TU NOVIO DICE:
+            </div>
+            <!-- Question text -->
+            <p id="question-text" class="font-pixelText text-2xl sm:text-3xl text-white tracking-wide mt-2 min-h-[64px] flex items-center">
+              Cargando pregunta...
+            </p>
+            <!-- Dialogue Arrow -->
+            <div class="text-right text-arcade-gold text-xs font-pixelUi dialogue-arrow">
+              ▼
+            </div>
+          </div>
+
+          <!-- Options Grid (Multiple Choice A, B, C, D) -->
+          <div id="options-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Injected via JavaScript -->
+          </div>
+
+          <!-- Game Over Modal Screen (In-arena overlay) -->
+          <div id="game-over-screen" class="hidden absolute inset-0 bg-[#090314]/95 z-40 flex flex-col items-center justify-center p-6 text-center">
+            <span class="text-4xl mb-2">💀</span>
+            <h3 class="text-xl sm:text-2xl font-pixelTitle text-[#ff2a5f] tracking-widest drop-shadow-[2px_2px_0_#000] mb-3">
+              GAME OVER
+            </h3>
+            <p class="font-pixelText text-xl text-gray-200 max-w-md mb-6 leading-tight">
+              &quot;¡Te quedaste sin corazones! Pero en el amor no hay vidas limitadas. ¿Querés usar una moneda mágica para continuar?&quot;
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4">
+              <button onclick="restartTriviaGame()" class="pixel-btn px-6 py-3 text-xs sm:text-sm tracking-wider">
+                CONTINUE? [9] (REINTENTAR)
+              </button>
+              <button onclick="skipToPrize()" class="pixel-btn-secondary px-6 py-3 text-xs sm:text-sm tracking-wider font-pixelTitle">
+                DESBLOQUEAR IGUAL (MODO TRAMPA)
+              </button>
+            </div>
+          </div>
+
+          <!-- Victory Screen (In-arena overlay) -->
+          <div id="victory-screen" class="hidden absolute inset-0 bg-[#090314]/95 z-40 flex flex-col items-center justify-center p-6 text-center">
+            <span class="text-4xl mb-2 animate-bounce">🏆</span>
+            <h3 class="text-xl sm:text-2xl font-pixelTitle text-arcade-gold tracking-widest drop-shadow-[2px_2px_0_#000] mb-2">
+              ★ YOU WIN! ★
+            </h3>
+            <p class="text-sm font-pixelTitle text-arcade-neonGreen mb-3">
+              ¡PERFECT CLEAR! ME CONOCÉS COMO NADIE
+            </p>
+            <p class="font-pixelText text-xl text-gray-200 max-w-md mb-6 leading-tight">
+              Has demostrado un dominio legendario de nuestra historia. El jefe final ha sido derrotado y el regalo está listo para abrir.
+            </p>
+            <a href="#final-section" onclick="unlockPrize()" class="pixel-btn-gold px-8 py-4 text-xs sm:text-sm tracking-wider font-pixelTitle border-4 border-black">
+              🎁 VER MI REGALO DESBLOQUEADO
+            </a>
+          </div>
+
+        </div>
+      </section>
+
+
+      <!-- ========================================== -->
+      <!-- 5. PANTALLA FINAL — "BOSS DESBLOQUEADO" / VIDEO SORPRESA -->
+      <!-- ========================================== -->
+      <section id="final-section" class="scroll-mt-6">
+        
+        <!-- Header Banner -->
+        <div class="flex items-center gap-3 mb-6 bg-[#1a0a33] p-3 border-4 border-black shadow-[4px_4px_0_#000]">
+          <div class="w-8 h-8 bg-arcade-neonGreen flex items-center justify-center border-2 border-black text-black font-pixelTitle text-sm">
+            🎁
+          </div>
+          <div>
+            <h2 class="text-sm sm:text-base md:text-lg font-pixelTitle text-white uppercase tracking-wider">
+              NIVEL FINAL: TU REGALO DESBLOQUEADO
+            </h2>
+            <p class="text-xs text-arcade-pastel font-pixelUi">
+              El boss final ha sido derrotado. Reclamá tu recompensa legendaria.
+            </p>
+          </div>
+        </div>
+
+        <!-- Retro Loading Transition Bar -->
+        <div id="loading-bar-container" class="pixel-box p-6 text-center mb-8 bg-[#100524]">
+          <div class="flex items-center justify-between text-xs font-pixelUi text-arcade-gold mb-2">
+            <span id="loading-text" class="animate-pixel-blink">CARGANDO TU REGALO...</span>
+            <span id="loading-percent">100% COMPLETO</span>
+          </div>
+          <!-- 16-bit segmented loading bar -->
+          <div class="w-full h-8 bg-[#090314] border-4 border-black p-1">
+            <div id="loading-fill" class="h-full bg-gradient-to-r from-arcade-primary via-arcade-pink to-arcade-gold w-full transition-all duration-700"></div>
+          </div>
+        </div>
+
+        <!-- Final Reward Showcase (Retro TV Console Screen) -->
+        <div class="pixel-box-inset p-4 sm:p-6 md:p-8 bg-[#0a0314] flex flex-col items-center">
+          
+          <!-- Retro TV Cabinet Mockup Frame -->
+          <div class="w-full max-w-3xl bg-[#26123d] border-[6px] border-black p-4 sm:p-6 shadow-[8px_8px_0_#000] relative">
+            
+            <!-- TV top controls & antenna aesthetic -->
+            <div class="flex items-center justify-between border-b-2 border-black pb-2 mb-4 text-[10px] font-pixelUi text-gray-400">
+              <span class="flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 bg-red-600 rounded-none inline-block border border-black animate-pulse"></span>
+                CHANNEL: LOVE-TV 90s
+              </span>
+              <span class="text-arcade-gold">COLOR MATRIX CRT</span>
+            </div>
+
+            <!-- Video Player Bezel -->
+            <div class="relative w-full aspect-video bg-black border-4 border-black shadow-[inset_4px_4px_0_#1a082e] flex flex-col items-center justify-center overflow-hidden">
+              
+              <!-- Video Tag ready for user's video -->
+              <!-- Reemplaza el src con tu video real: /video.mp4 -->
+              <video id="reward-video" class="w-full h-full object-cover" controls preload="metadata" poster="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='640' height='360' viewBox='0 0 640 360'><rect width='640' height='360' fill='%23120626'/><text x='320' y='180' fill='%23ffd1dc' font-family='monospace' font-size='20' text-anchor='middle'>[PULSA PLAY PARA VER EL VIDEO.MP4]</text></svg>">
+                <source src="video.mp4" type="video/mp4">
+                Tu navegador no soporta el tag de video. Reemplazá con [VIDEO.MP4].
+              </video>
+
+              <!-- Video fallback reminder overlay -->
+              <div class="absolute bottom-2 left-2 bg-black/80 border border-[#ff5c93] px-2 py-1 text-[10px] text-arcade-pastel font-pixelUi pointer-events-none">
+                📼 ARCHIVO: [VIDEO.MP4]
+              </div>
+            </div>
+
+            <!-- TV knobs aesthetic at the bottom -->
+            <div class="flex items-center justify-between pt-4 mt-2 border-t-2 border-black text-xs font-pixelUi text-gray-400">
+              <div class="flex items-center gap-2">
+                <span class="w-5 h-5 bg-[#120626] border-2 border-black inline-block shadow-[1px_1px_0_#fff]"></span>
+                <span class="w-5 h-5 bg-[#120626] border-2 border-black inline-block shadow-[1px_1px_0_#fff]"></span>
+                <span class="text-[10px] text-gray-400">VOL / BRIGHT</span>
+              </div>
+              <span class="text-arcade-neonGreen">STATUS: REPRODUCTOR LISTO</span>
+            </div>
+          </div>
+
+          <!-- Dedication Final Letter Box -->
+          <div class="mt-8 w-full max-w-3xl bg-[#180a2f] border-4 border-black p-6 shadow-[6px_6px_0_#000] relative">
+            <div class="absolute -top-3 left-6 bg-[#ffbe0b] text-black border-2 border-black px-3 py-0.5 text-xs font-pixelTitle font-bold">
+              ★ DEDICATORIA FINAL ★
+            </div>
+            
+            <h3 class="font-pixelTitle text-base sm:text-lg text-white mb-4 mt-2">
+              Para [NOMBRE], la dueña de mi corazón:
+            </h3>
+
+            <div class="font-pixelText text-xl sm:text-2xl text-[#ffd1dc] space-y-4 leading-relaxed">
+              <p>
+                &quot;[MENSAJE / DEDICATORIA FINAL: Podés escribir acá tu carta de amor completa. 
+                Gracias por cada partida compartida, por cada risa, por ser mi compañera incondicional en las buenas y en las malas. 
+                Sos la mejor casualidad que me pasó en la vida y el regalo más lindo que tengo todos los días.]&quot;
+              </p>
+              <p class="text-arcade-gold">
+                &quot;Te amo hasta el último nivel del universo. ¡Feliz cumpleaños!&quot;
+              </p>
+            </div>
+
+            <div class="mt-6 pt-4 border-t-2 border-black flex flex-wrap items-center justify-between text-xs font-pixelUi text-arcade-pink gap-2">
+              <span>CON TODO MI AMOR, SIEMPRE.</span>
+              <span class="text-white font-pixelTitle text-[10px]">PLAYER 2 ❤</span>
+            </div>
+          </div>
+
+          <!-- Bottom Action Buttons: Play Again -->
+          <div class="mt-8 flex flex-col sm:flex-row items-center gap-4">
+            <button onclick="restartTriviaGame(); window.scrollTo({top: 0, behavior: 'smooth'});" class="pixel-btn px-8 py-4 text-xs sm:text-sm tracking-wider font-pixelTitle">
+              🔄 JUGAR DE NUEVO DESDE EL INICIO
+            </button>
+            <a href="#map-section" onclick="playSound('select')" class="pixel-btn-secondary px-6 py-4 text-xs sm:text-sm tracking-wider font-pixelTitle">
+              🗺️ VER MAPA OTRA VEZ
+            </a>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- Bottom Arcade Cabinet Coin Slot & Specs Footer -->
+      <footer class="mt-12 pt-6 border-t-4 border-black flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-pixelUi text-gray-500">
+        <div class="flex items-center gap-2">
+          <span class="w-3 h-3 bg-arcade-neonGreen inline-block border border-black animate-pixel-blink"></span>
+          <span>SISTEMA 16-BIT RETRO POWERED • COMPATIBLE CON ASTRO</span>
+        </div>
+        <div class="text-center sm:text-right">
+          <span class="text-arcade-pastel">INSERT COIN TO CONTINUE • CREDIT(∞)</span>
+        </div>
+      </footer>
+
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- JAVASCRIPT: LOGICA DEL JUEGO TRIVIA Y SFX -->
+  <!-- ========================================== -->
+  <script>
+    // 1. Trivia Questions Data (Editable & Expandable)
+    const triviaQuestions = [
+      {
+        question: "¿En qué lugar tuvimos nuestra primera cita inolvidable?",
+        options: [
+          "En esa cafetería pequeña que nos encantó",
+          "En el cine mirando una peli de terror",
+          "Caminando por el parque con helado",
+          "En una pizzería de trasnoche"
+        ],
+        correct: 0, // Índice de la respuesta correcta (0-3)
+        comment: "¡Exacto! Pedimos ese café y nos quedamos charlando horas."
+      },
+      {
+        question: "¿Cuál es mi comida favorita que siempre me hace sonreír?",
+        options: [
+          "Hamburguesa con mil salsas",
+          "Las pastas caseras que hacemos juntos",
+          "Sushi los fines de semana",
+          "Pizza fría del día siguiente"
+        ],
+        correct: 1,
+        comment: "¡Sos una genia! Las pastas compartidas son insuperables."
+      },
+      {
+        question: "¿Qué es lo primero que pensé cuando te vi por primera vez?",
+        options: [
+          "'Ojalá le caiga bien mi remera'",
+          "'Tiene la sonrisa más hermosa que vi en mi vida'",
+          "'Qué nervios, no sé qué decir'",
+          "'Definitivamente esta chica es de otro planeta'"
+        ],
+        correct: 1,
+        comment: "¡Totalmente! Quedé hipnotizado con tu sonrisa desde el segundo cero."
+      },
+      {
+        question: "¿Cuál es nuestro 'meme' o chiste interno favorito?",
+        options: [
+          "Esa voz rara que hacemos para quejarnos",
+          "El baile ridículo cuando estamos felices",
+          "El apodo secreto que solo nosotros sabemos",
+          "¡Todas las anteriores son súper nuestras!"
+        ],
+        correct: 3,
+        comment: "¡100% real! Tenemos un diccionario propio de locuras."
+      },
+      {
+        question: "¿Quién ama más a quién en esta relación?",
+        options: [
+          "Empate técnico legendario",
+          "Yo a vos, por goleada",
+          "Vos a mí, sin dudas",
+          "Un amor mutuo e infinito nivel 99"
+        ],
+        correct: 3,
+        comment: "¡Respuesta perfecta! Amor infinito de 16-bit."
+      }
+    ];
+
+    // State Variables
+    let currentQuestionIdx = 0;
+    let lives = 3;
+    let score = 0;
+    let isAnsweringBlocked = false;
+
+    // Elements
+    const questionTextEl = document.getElementById('question-text');
+    const questionCounterEl = document.getElementById('question-counter');
+    const optionsGridEl = document.getElementById('options-grid');
+    const gameScoreEl = document.getElementById('game-score');
+    const hudScoreEl = document.getElementById('hud-score');
+    const feedbackBannerEl = document.getElementById('feedback-banner');
+    const gameOverScreenEl = document.getElementById('game-over-screen');
+    const victoryScreenEl = document.getElementById('victory-screen');
+
+    // Update hearts display
+    function updateHeartsDisplay() {
+      for (let i = 1; i <= 3; i++) {
+        const heartSvg = document.getElementById(`heart-${i}`);
+        if (i <= lives) {
+          // Full Heart
+          heartSvg.setAttribute('fill', '#ff2a5f');
+          heartSvg.style.opacity = '1';
+          heartSvg.style.filter = 'drop-shadow(0 0 4px #ff2a5f)';
+        } else {
+          // Empty / Broken Heart
+          heartSvg.setAttribute('fill', '#3d162a');
+          heartSvg.style.opacity = '0.4';
+          heartSvg.style.filter = 'none';
+        }
+      }
+    }
+
+    // Render Question
+    function loadQuestion(idx) {
+      if (idx >= triviaQuestions.length) {
+        // Complete victory!
+        showVictoryScreen();
+        return;
+      }
+
+      isAnsweringBlocked = false;
+      const q = triviaQuestions[idx];
+      questionCounterEl.textContent = `PREGUNTA ${idx + 1} DE ${triviaQuestions.length}`;
+      questionTextEl.textContent = q.question;
+
+      // Render Options
+      optionsGridEl.innerHTML = '';
+      const letters = ['A', 'B', 'C', 'D'];
+      
+      q.options.forEach((opt, index) => {
+        const btn = document.createElement('button');
+        btn.className = `p-3 sm:p-4 text-left border-4 border-black bg-[#1f0d3b] hover:bg-[#341461] transition-all font-pixelUi text-xs sm:text-sm text-white shadow-[4px_4px_0_#000] flex items-center gap-3 group`;
+        btn.innerHTML = `
+          <span class="w-7 h-7 flex-shrink-0 bg-black border-2 border-arcade-gold text-arcade-gold font-pixelTitle text-xs flex items-center justify-center group-hover:bg-arcade-gold group-hover:text-black">
+            ${letters[index]}
+          </span>
+          <span class="flex-grow">${opt}</span>
+        `;
+        btn.onclick = () => handleSelectAnswer(index, btn);
+        optionsGridEl.appendChild(btn);
+      });
+    }
+
+    // Handle Option Click
+    function handleSelectAnswer(chosenIdx, btnElement) {
+      if (isAnsweringBlocked) return;
+      isAnsweringBlocked = true;
+
+      const q = triviaQuestions[currentQuestionIdx];
+      const isCorrect = chosenIdx === q.correct;
+
+      if (isCorrect) {
+        // SUCCESS
+        playSound('correct');
+        score += 100;
+        gameScoreEl.textContent = score;
+        hudScoreEl.textContent = 10000 + score;
+        gameScoreEl.classList.add('animate-score-pop');
+        setTimeout(() => gameScoreEl.classList.remove('animate-score-pop'), 500);
+
+        btnElement.classList.remove('bg-[#1f0d3b]');
+        btnElement.classList.add('bg-[#06d6a0]', 'text-black', 'border-[#000]');
+
+        showFeedback('+100 PUNTOS ★ ¡CORRECTO!', 'bg-[#00f5a0]', 'text-black');
+
+        setTimeout(() => {
+          currentQuestionIdx++;
+          loadQuestion(currentQuestionIdx);
+        }, 1200);
+
+      } else {
+        // WRONG
+        playSound('wrong');
+        lives--;
+        updateHeartsDisplay();
+
+        btnElement.classList.remove('bg-[#1f0d3b]');
+        btnElement.classList.add('bg-[#ff2a5f]', 'text-white');
+
+        showFeedback('-1 CORAZÓN ★ ¡OUCH!', 'bg-[#ff2a5f]', 'text-white');
+
+        if (lives <= 0) {
+          // Trigger Game Over
+          setTimeout(() => {
+            gameOverScreenEl.classList.remove('hidden');
+          }, 800);
+        } else {
+          // Allow continuing to next or retry
+          setTimeout(() => {
+            currentQuestionIdx++;
+            loadQuestion(currentQuestionIdx);
+          }, 1200);
+        }
+      }
+    }
+
+    // Feedback Toast inside arena
+    function showFeedback(text, bgColorClass, textColorClass) {
+      feedbackBannerEl.textContent = text;
+      feedbackBannerEl.className = `absolute top-4 left-1/2 -translate-x-1/2 z-30 px-6 py-2 border-4 border-black font-pixelTitle text-xs sm:text-sm tracking-wider shadow-[4px_4px_0_#000] ${bgColorClass} ${textColorClass} animate-bounce`;
+      feedbackBannerEl.classList.remove('hidden');
+
+      setTimeout(() => {
+        feedbackBannerEl.classList.add('hidden');
+      }, 1000);
+    }
+
+    // Restart Trivia
+    function restartTriviaGame() {
+      lives = 3;
+      score = 0;
+      currentQuestionIdx = 0;
+      gameScoreEl.textContent = '0';
+      updateHeartsDisplay();
+      gameOverScreenEl.classList.add('hidden');
+      victoryScreenEl.classList.add('hidden');
+      loadQuestion(0);
+      playSound('start');
+    }
+
+    // Skip to prize if desired
+    function skipToPrize() {
+      gameOverScreenEl.classList.add('hidden');
+      showVictoryScreen();
+    }
+
+    // Show Victory Screen
+    function showVictoryScreen() {
+      playSound('win');
+      victoryScreenEl.classList.remove('hidden');
+    }
+
+    // Unlock prize button action
+    function unlockPrize() {
+      playSound('correct');
+      const finalSec = document.getElementById('final-section');
+      finalSec.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Initial game launch
+    document.addEventListener('DOMContentLoaded', () => {
+      updateHeartsDisplay();
+      loadQuestion(0);
+    });
+    // In case script executes after DOM is parsed:
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      updateHeartsDisplay();
+      loadQuestion(0);
+    }
+  </script>
+
+</body>
+</html>

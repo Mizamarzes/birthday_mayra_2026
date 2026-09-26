@@ -1,0 +1,106 @@
+---
+import SectionBanner from "./SectionBanner.astro";
+import { finale } from "../data/site";
+
+const posterSvg = `<svg xmlns='http://www.w3.org/2000/svg' width='640' height='360' viewBox='0 0 640 360'><rect width='640' height='360' fill='%23120a20'/><text x='320' y='180' fill='%23ffd6e2' font-family='monospace' font-size='20' text-anchor='middle'>[PULSA PLAY PARA VER EL VIDEO.MP4]</text></svg>`;
+---
+
+<section id="final-section" class="scroll-mt-6">
+  <SectionBanner
+    emoji="🎁"
+    title="Nivel final: tu regalo desbloqueado"
+    subtitle="El boss final ha sido derrotado. Reclamá tu recompensa legendaria."
+    accent="bg-neon"
+    accentText="text-black"
+  />
+
+  <!-- Barra de carga retro -->
+  <div class="pixel-box mb-8 p-6 text-center">
+    <div class="mb-2 flex items-center justify-between font-ui text-xs text-tertiary">
+      <span class="animate-pixel-blink">CARGANDO TU REGALO...</span>
+      <span>100% COMPLETO</span>
+    </div>
+    <div class="h-8 w-full border-4 border-black bg-ink p-1">
+      <div class="h-full w-full bg-gradient-to-r from-primary via-secondary to-tertiary"></div>
+    </div>
+  </div>
+
+  <div class="pixel-box-inset flex flex-col items-center bg-void p-4 sm:p-6 md:p-8">
+    <!-- Mueble de TV retro -->
+    <div class="relative w-full max-w-3xl border-[6px] border-black bg-bezel p-4 shadow-[8px_8px_0_#000] sm:p-6">
+      <div class="mb-4 flex items-center justify-between border-b-2 border-black pb-2 font-ui text-[10px] text-muted">
+        <span class="flex items-center gap-1.5">
+          <span class="inline-block h-2.5 w-2.5 animate-pulse border border-black bg-red-600"></span>
+          CHANNEL: LOVE-TV 90s
+        </span>
+        <span class="text-tertiary">COLOR MATRIX CRT</span>
+      </div>
+
+      <div
+        class="relative flex aspect-video w-full flex-col items-center justify-center overflow-hidden border-4 border-black bg-black shadow-[inset_4px_4px_0_#1a082e]"
+      >
+        <video
+          id="reward-video"
+          class="h-full w-full object-cover"
+          controls
+          preload="metadata"
+          poster={`data:image/svg+xml;utf8,${posterSvg}`}
+        >
+          <source src={finale.videoSrc} type="video/mp4" />
+          Tu navegador no soporta el tag de video. Reemplazá con {finale.videoLabel}.
+        </video>
+
+        <div
+          class="pointer-events-none absolute bottom-2 left-2 border border-secondary bg-black/80 px-2 py-1 font-ui text-[10px] text-pastel"
+        >
+          📼 ARCHIVO: {finale.videoLabel}
+        </div>
+      </div>
+
+      <div class="mt-2 flex items-center justify-between border-t-2 border-black pt-4 font-ui text-xs text-muted">
+        <div class="flex items-center gap-2">
+          <span class="inline-block h-5 w-5 border-2 border-black bg-screen shadow-[1px_1px_0_#fff]"></span>
+          <span class="inline-block h-5 w-5 border-2 border-black bg-screen shadow-[1px_1px_0_#fff]"></span>
+          <span class="text-[10px]">VOL / BRIGHT</span>
+        </div>
+        <span class="text-neon">STATUS: REPRODUCTOR LISTO</span>
+      </div>
+    </div>
+
+    <!-- Dedicatoria -->
+    <div class="relative mt-8 w-full max-w-3xl border-4 border-black bg-cabinet p-6 shadow-[6px_6px_0_#000]">
+      <div
+        class="absolute -top-3 left-6 border-2 border-black bg-tertiary px-3 py-0.5 font-title text-xs font-bold text-black"
+      >
+        ★ DEDICATORIA FINAL ★
+      </div>
+
+      <h3 class="mb-4 mt-2 font-title text-base text-white sm:text-lg">{finale.dedicationTitle}</h3>
+
+      <div class="space-y-4 font-body text-sm leading-relaxed text-pastel sm:text-base">
+        {finale.dedication.map((p) => <p>&ldquo;{p}&rdquo;</p>)}
+        <p class="text-tertiary">&ldquo;{finale.closing}&rdquo;</p>
+      </div>
+
+      <div
+        class="mt-6 flex flex-wrap items-center justify-between gap-2 border-t-2 border-black pt-4 font-ui text-xs text-secondary-light"
+      >
+        <span>{finale.signature}</span>
+        <span class="font-title text-[10px] text-white">PLAYER 2 ❤</span>
+      </div>
+    </div>
+
+    <div class="mt-8 flex flex-col items-center gap-4 sm:flex-row">
+      <button type="button" id="btn-replay" class="pixel-btn px-8 py-4 text-xs tracking-wider sm:text-sm">
+        🔄 JUGAR DE NUEVO DESDE EL INICIO
+      </button>
+      <a
+        href="#map-section"
+        data-sfx="select"
+        class="pixel-btn pixel-btn-secondary px-6 py-4 text-xs tracking-wider sm:text-sm"
+      >
+        🗺️ VER MAPA OTRA VEZ
+      </a>
+    </div>
+  </div>
+</section>

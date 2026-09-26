@@ -1,0 +1,85 @@
+---
+import SectionBanner from "./SectionBanner.astro";
+import { mapNodes } from "../data/site";
+
+/** Color del tramo de riel que sale de cada nodo hacia el siguiente. */
+const railColors = ["bg-primary", "bg-secondary", "bg-tertiary"];
+---
+
+<section id="map-section" class="mb-14 scroll-mt-6">
+  <SectionBanner
+    emoji="🗺️"
+    title="Mapa de niveles: nuestro recorrido"
+    subtitle="Estilo World Map clásico de plataformas. Cada hito superado juntos."
+    accent="bg-tertiary"
+    accentText="text-black"
+  />
+
+  <div class="pixel-box-inset relative overflow-hidden bg-void p-4 sm:p-6 md:p-8">
+    <!-- Trama de puntos de fondo -->
+    <div
+      class="pointer-events-none absolute inset-0 bg-[radial-gradient(#ff4b93_1px,transparent_1px)] opacity-10 [background-size:16px_16px]"
+      aria-hidden="true"
+    >
+    </div>
+
+    <ol class="relative z-10 grid list-none grid-cols-1 gap-6 p-0 md:grid-cols-4 md:gap-4">
+      {
+        mapNodes.map((node, i) => (
+          <li class="group relative flex cursor-pointer flex-col items-center text-center" data-sfx="select">
+            <span
+              class:list={[
+                "mb-2 border border-tertiary bg-black px-2 py-0.5 font-ui text-[10px] text-tertiary shadow-[2px_2px_0_#000]",
+                node.current && "animate-pulse",
+              ]}
+            >
+              {node.world}
+            </span>
+
+            {/* El riel vive junto al icono para que conecte los nodos, no las tarjetas. */}
+            <div class="relative flex w-full items-center justify-center">
+              {i < mapNodes.length - 1 && (
+                <span
+                  class:list={[
+                    "absolute left-1/2 top-1/2 -z-10 hidden h-3 w-[calc(100%+1rem)] -translate-y-1/2 border-y-2 border-black md:block",
+                    railColors[i],
+                  ]}
+                  aria-hidden="true"
+                />
+              )}
+              <div
+                class:list={[
+                  "flex h-16 w-16 items-center justify-center border-4 border-black shadow-[4px_4px_0_#000] transition-transform group-hover:-translate-y-1",
+                  node.nodeClass,
+                ]}
+                aria-hidden="true"
+              >
+                <span class="text-2xl">{node.emoji}</span>
+              </div>
+            </div>
+
+            <div class:list={["mt-3 w-full max-w-[200px] p-3", node.current ? "pixel-box-gold" : "pixel-box"]}>
+              <span class:list={["block font-ui text-[10px]", node.current ? "text-tertiary" : "text-neon"]}>
+                {node.date}
+              </span>
+              <h3 class="my-1 font-title text-xs text-white">{node.title}</h3>
+              <p class:list={["font-body text-xs leading-relaxed", node.current ? "text-pastel" : "text-muted"]}>
+                &ldquo;{node.lore}&rdquo;
+              </p>
+              {node.current ? (
+                <div class="mt-2 animate-pixel-blink font-ui text-[9px] text-neon">▶ EN JUEGO</div>
+              ) : (
+                <div class="mt-2 font-ui text-[9px] text-tertiary">★ CLEARED</div>
+              )}
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+
+    <p class="mt-6 text-center font-ui text-xs text-muted">
+      <span class="text-tertiary">CONSEJO RETRO:</span> Cada hito desbloqueó un bonus permanente de
+      complicidad y risas infinitas.
+    </p>
+  </div>
+</section>

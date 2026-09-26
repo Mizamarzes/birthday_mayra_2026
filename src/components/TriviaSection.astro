@@ -1,0 +1,130 @@
+---
+import PixelHeart from "./PixelHeart.astro";
+import { player, triviaQuestions } from "../data/site";
+
+const lives = [1, 2, 3];
+---
+
+<section id="game-section" class="mb-14 scroll-mt-6">
+  <!-- Banner con barra de vidas -->
+  <div
+    class="mb-4 flex flex-wrap items-center justify-between gap-3 border-4 border-black bg-cabinet p-3 shadow-[4px_4px_0_#000]"
+  >
+    <div class="flex items-center gap-3">
+      <div
+        class="flex h-8 w-8 shrink-0 items-center justify-center border-2 border-black bg-primary font-title text-sm text-white"
+        aria-hidden="true"
+      >
+        🎮
+      </div>
+      <div>
+        <h2 class="font-title text-sm uppercase tracking-wider text-white sm:text-base md:text-lg">
+          Minijuego: ¿cuánto me conocés?
+        </h2>
+        <p class="font-ui text-xs text-pastel">
+          Respondé la trivia para ganar el regalo. ¡Cuidado con tus corazones!
+        </p>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-2 border-2 border-black bg-ink px-4 py-2">
+      <span class="mr-1 font-title text-[10px] text-tertiary">VIDAS:</span>
+      <div id="heart-container" class="flex items-center gap-1.5" role="status" aria-label="Vidas restantes">
+        {lives.map((n) => <PixelHeart id={`heart-${n}`} class="h-6 w-6 transition-all duration-300" fill="#ff2a55" />)}
+      </div>
+    </div>
+  </div>
+
+  <!-- Arena de juego -->
+  <div id="trivia-arena" class="pixel-box relative overflow-hidden p-4 sm:p-6 md:p-8">
+    <div
+      id="feedback-banner"
+      role="status"
+      aria-live="polite"
+      hidden
+      class="absolute left-1/2 top-4 z-30 -translate-x-1/2 border-4 border-black px-6 py-2 font-title text-sm tracking-wider shadow-[4px_4px_0_#000]"
+    >
+    </div>
+
+    <div class="mb-4 flex items-center justify-between border-b-2 border-black pb-2 font-ui text-xs">
+      <span id="question-counter" class="font-bold text-tertiary">
+        PREGUNTA 1 DE {triviaQuestions.length}
+      </span>
+      <div class="flex items-center gap-2">
+        <span class="text-muted">PUNTAJE:</span>
+        <span id="game-score" class="font-title text-sm text-neon">0</span>
+      </div>
+    </div>
+
+    <!-- Cuadro de diálogo RPG -->
+    <div class="relative mb-6 border-4 border-black bg-ink p-4 shadow-[inset_4px_4px_0_#000] sm:p-6">
+      <div
+        class="absolute -top-3 left-4 border-2 border-black bg-primary px-3 py-0.5 font-title text-[10px] text-white"
+      >
+        {player.from} DICE:
+      </div>
+      <p
+        id="question-text"
+        class="mt-2 flex min-h-[64px] items-center font-body text-base leading-relaxed text-white sm:text-lg"
+      >
+        Cargando pregunta...
+      </p>
+      <div class="animate-dialogue-arrow text-right font-ui text-xs text-tertiary" aria-hidden="true">▼</div>
+    </div>
+
+    <!-- Opciones (las inyecta el script del juego) -->
+    <div id="options-grid" class="grid grid-cols-1 gap-4 sm:grid-cols-2"></div>
+
+    <!-- Game Over -->
+    <div
+      id="game-over-screen"
+      hidden
+      class="absolute inset-0 z-40 flex flex-col items-center justify-center bg-ink/95 p-6 text-center"
+    >
+      <span class="mb-2 text-4xl" aria-hidden="true">💀</span>
+      <h3 class="mb-3 font-title text-xl tracking-widest text-primary drop-shadow-[2px_2px_0_#000] sm:text-2xl">
+        GAME OVER
+      </h3>
+      <p class="mb-6 max-w-md font-body text-sm leading-relaxed text-pastel">
+        &ldquo;¡Te quedaste sin corazones! Pero en el amor no hay vidas limitadas. ¿Querés usar una
+        moneda mágica para continuar?&rdquo;
+      </p>
+      <div class="flex flex-col gap-4 sm:flex-row">
+        <button type="button" id="btn-retry" class="pixel-btn px-6 py-3 text-xs tracking-wider sm:text-sm">
+          CONTINUE? [9] (REINTENTAR)
+        </button>
+        <button
+          type="button"
+          id="btn-skip"
+          class="pixel-btn pixel-btn-secondary px-6 py-3 text-xs tracking-wider sm:text-sm"
+        >
+          DESBLOQUEAR IGUAL (MODO TRAMPA)
+        </button>
+      </div>
+    </div>
+
+    <!-- Victoria -->
+    <div
+      id="victory-screen"
+      hidden
+      class="absolute inset-0 z-40 flex flex-col items-center justify-center bg-ink/95 p-6 text-center"
+    >
+      <span class="mb-2 animate-bounce text-4xl" aria-hidden="true">🏆</span>
+      <h3 class="mb-2 font-title text-xl tracking-widest text-tertiary drop-shadow-[2px_2px_0_#000] sm:text-2xl">
+        ★ YOU WIN! ★
+      </h3>
+      <p class="mb-3 font-title text-sm text-neon">¡PERFECT CLEAR! ME CONOCÉS COMO NADIE</p>
+      <p class="mb-6 max-w-md font-body text-sm leading-relaxed text-pastel">
+        Has demostrado un dominio legendario de nuestra historia. El jefe final ha sido derrotado y el
+        regalo está listo para abrir.
+      </p>
+      <a
+        href="#final-section"
+        id="btn-unlock"
+        class="pixel-btn pixel-btn-gold border-4 border-black px-8 py-4 text-xs tracking-wider sm:text-sm"
+      >
+        🎁 VER MI REGALO DESBLOQUEADO
+      </a>
+    </div>
+  </div>
+</section>

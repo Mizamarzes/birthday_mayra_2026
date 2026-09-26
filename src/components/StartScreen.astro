@@ -1,0 +1,106 @@
+---
+import { intro, player } from "../data/site";
+
+/** Estrellas parpadeantes del fondo: posición + desfase de animación. */
+const stars = [
+  { pos: "top-10 left-12", delay: "0s" },
+  { pos: "top-24 right-20", delay: "0.3s" },
+  { pos: "bottom-28 left-24", delay: "0.6s" },
+  { pos: "bottom-12 right-16", delay: "0.2s" },
+];
+---
+
+<section
+  id="start-screen"
+  class="pixel-box-inset relative mb-12 flex min-h-[580px] flex-col items-center justify-between overflow-hidden px-4 py-10 text-center md:min-h-[640px]"
+>
+  <!-- Fondo decorativo: estrellas y corazones flotantes -->
+  <div class="pointer-events-none absolute inset-0 overflow-hidden opacity-40" aria-hidden="true">
+    {
+      stars.map((s) => (
+        <span class:list={["pixel-star animate-pixel-blink", s.pos]} style={`animation-delay:${s.delay}`} />
+      ))
+    }
+    <svg class="absolute left-1/4 top-16 h-8 w-8 animate-float opacity-60" viewBox="0 0 16 16" fill="#ff2a55">
+      <path d="M2 3h4v2H2zM10 3h4v2h-4zM1 5h14v3H1zM2 8h12v2H2zM4 10h8v2H4zM6 12h4v2H6zM7 14h2v1H7z"></path>
+    </svg>
+    <svg
+      class="absolute bottom-20 right-1/4 h-10 w-10 animate-float opacity-50"
+      style="animation-delay:1.5s"
+      viewBox="0 0 16 16"
+      fill="#ff4b93"
+    >
+      <path d="M2 3h4v2H2zM10 3h4v2h-4zM1 5h14v3H1zM2 8h12v2H2zM4 10h8v2H4zM6 12h4v2H6zM7 14h2v1H7z"></path>
+    </svg>
+    <svg
+      class="absolute left-8 top-1/2 h-6 w-6 animate-float opacity-40"
+      style="animation-delay:2.2s"
+      viewBox="0 0 16 16"
+      fill="#ffbe0b"
+    >
+      <path d="M7 1h2v3H7zM3 4h10v2H3zM1 6h14v3H1zM3 9h10v2H3zM5 11h6v2H5zM7 13h2v2H7z"></path>
+    </svg>
+  </div>
+
+  <!-- Banda superior -->
+  <div
+    class="relative z-10 flex w-full items-center justify-between border-b-2 border-edge pb-3 font-ui text-xs md:text-sm"
+  >
+    <span class="animate-pixel-blink tracking-widest text-tertiary">★ SPECIAL EVENT ★</span>
+    <span class="text-pastel">INSERT COIN [01/01]</span>
+    <span class="text-neon">FREE PLAY</span>
+  </div>
+
+  <!-- Bloque central: logo y llamada a la acción -->
+  <div class="relative z-10 my-auto flex flex-col items-center py-6">
+    <div class="mb-4 inline-block animate-float border-2 border-black bg-panel p-2 shadow-[3px_3px_0_#ff2a55]">
+      <div class="flex items-center gap-2 px-3 py-1">
+        <span class="text-lg" aria-hidden="true">🎂</span>
+        <span class="font-title text-xs tracking-wider text-tertiary md:text-sm">{intro.badge}</span>
+        <span class="text-lg" aria-hidden="true">💖</span>
+      </div>
+    </div>
+
+    <h1
+      class="font-title text-2xl uppercase leading-relaxed tracking-widest text-white drop-shadow-[0_4px_0_#000] sm:text-4xl md:text-5xl"
+    >
+      <span class="mb-2 block text-lg text-secondary-light sm:text-2xl md:text-3xl">{player.name}</span>
+      <span
+        class="bg-gradient-to-b from-white via-pastel to-primary bg-clip-text text-transparent drop-shadow-[4px_4px_0_#000]"
+      >
+        {intro.title}
+      </span>
+    </h1>
+
+    <div class="mt-4 flex items-center justify-center gap-2">
+      <span class="inline-block h-1 w-8 bg-primary"></span>
+      <p class="font-ui text-xs font-bold uppercase tracking-[0.2em] text-tertiary sm:text-sm">
+        {intro.subtitle}
+      </p>
+      <span class="inline-block h-1 w-8 bg-primary"></span>
+    </div>
+
+    <div class="mt-8 max-w-xl border-4 border-black bg-ink/90 p-4 text-center shadow-[4px_4px_0_#ff4b93]">
+      <p class="font-body text-sm leading-relaxed text-pastel sm:text-base">&ldquo;{intro.story}&rdquo;</p>
+    </div>
+
+    <div class="mt-8 flex flex-col items-center gap-4 sm:flex-row">
+      <a
+        href="#album-section"
+        data-sfx="start"
+        class="pixel-btn animate-pixel-blink px-6 py-4 text-xs tracking-widest sm:px-8 sm:text-sm md:text-base"
+      >
+        {intro.cta}
+      </a>
+    </div>
+    <span class="mt-3 font-ui text-[10px] text-muted">{intro.hint}</span>
+  </div>
+
+  <!-- Créditos -->
+  <div
+    class="relative z-10 flex w-full flex-col items-center justify-between gap-2 border-t-2 border-edge pt-4 font-ui text-[10px] text-secondary-light sm:flex-row"
+  >
+    <span>PLAYER 1: {player.name} ★ PLAYER 2: {player.from}</span>
+    <span>© 199X-{player.year} LOVE QUEST CORP. ALL RIGHTS RESERVED.</span>
+  </div>
+</section>

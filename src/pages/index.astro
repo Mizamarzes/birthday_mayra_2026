@@ -1,0 +1,46 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CabinetHeader from "../components/CabinetHeader.astro";
+import CabinetFooter from "../components/CabinetFooter.astro";
+import StartScreen from "../components/StartScreen.astro";
+import AlbumSection from "../components/AlbumSection.astro";
+import MapSection from "../components/MapSection.astro";
+import TriviaSection from "../components/TriviaSection.astro";
+import FinalSection from "../components/FinalSection.astro";
+import { intro, player } from "../data/site";
+---
+
+<Layout title={`${player.name} ★ ${intro.title}: Birthday Edition (16-Bit Retro Arcade)`}>
+  <!-- Mueble del arcade -->
+  <div
+    class="relative z-10 my-2 w-full max-w-5xl overflow-hidden border-[6px] border-black bg-screen shadow-[0_0_0_4px_#32195a,12px_12px_0px_#000] md:border-[10px]"
+  >
+    <CabinetHeader />
+
+    <div class="relative bg-screen p-3 sm:p-6 md:p-8">
+      <StartScreen />
+      <AlbumSection />
+      <MapSection />
+      <TriviaSection />
+      <FinalSection />
+      <CabinetFooter />
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import { bindSfxTriggers, playSound, toggleMute } from "../scripts/sfx";
+  import { initTrivia } from "../scripts/trivia";
+
+  bindSfxTriggers();
+  initTrivia();
+
+  // Interruptor de sonido del HUD.
+  const sfxToggle = document.getElementById("sfx-toggle");
+  sfxToggle?.addEventListener("click", () => {
+    const muted = toggleMute();
+    sfxToggle.textContent = muted ? "🔇 SFX OFF" : "🔊 SFX ON";
+    sfxToggle.setAttribute("aria-pressed", String(muted));
+    if (!muted) playSound("select");
+  });
+</script>

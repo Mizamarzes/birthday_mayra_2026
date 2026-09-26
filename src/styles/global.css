@@ -1,0 +1,262 @@
+@import "tailwindcss";
+
+/* El HTML original del diseño queda como referencia, no como fuente de clases. */
+@source not "../../design";
+
+/* ==========================================================
+   DESIGN TOKENS — Retro Romantic 16-Bit Arcade
+   Paleta oficial: Primary #FF2A55 · Secondary #FF4B93
+                   Tertiary #FFBE0B · Neutral #180D2B
+   ========================================================== */
+@theme {
+  /* --- Marca --- */
+  --color-primary: #ff2a55;
+  --color-primary-light: #ff7a95;
+  --color-primary-dark: #a6062e;
+
+  --color-secondary: #ff4b93;
+  --color-secondary-light: #ff8fbe;
+  --color-secondary-dark: #a30751;
+
+  --color-tertiary: #ffbe0b;
+  --color-tertiary-light: #ffe169;
+  --color-tertiary-dark: #946900;
+
+  /* --- Escala neutra derivada de #180D2B --- */
+  --color-ink: #07030d;
+  --color-void: #0b0614;
+  --color-inset: #0d0718;
+  --color-screen: #120a20;
+  --color-cabinet: #180d2b;
+  --color-panel: #1e1033;
+  --color-bezel: #251440;
+  --color-edge: #32195a;
+
+  /* --- Texto --- */
+  --color-pastel: #ffd6e2;
+  --color-muted: #9b8bb4;
+
+  /* --- Acentos de estado --- */
+  --color-neon: #00f5a0;
+  --color-cyan: #00e5ff;
+
+  /* --- Tipografías --- */
+  /* Press Start 2P no trae glifos acentuados (Á Í Ó Ñ): Space Mono los cubre
+     manteniendo el aire monoespaciado en vez de saltar a una fuente del sistema. */
+  --font-title: "Press Start 2P", "Space Mono", ui-monospace, monospace;
+  --font-ui: "Space Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-body: "Rubik", ui-sans-serif, system-ui, sans-serif;
+
+  /* --- Animaciones --- */
+  --animate-pixel-blink: blink 0.9s infinite step-end;
+  --animate-float: float-pixel 3s infinite steps(4, jump-none);
+  --animate-score-pop: pulse-score 0.5s ease;
+  --animate-dialogue-arrow: bounce-arrow 0.6s infinite steps(2, jump-none);
+}
+
+@keyframes blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+@keyframes float-pixel {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes pulse-score {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); color: var(--color-tertiary); }
+  100% { transform: scale(1); }
+}
+
+@keyframes bounce-arrow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
+}
+
+/* ==========================================================
+   BASE
+   ========================================================== */
+@layer base {
+  * {
+    image-rendering: pixelated;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* El atributo `hidden` debe ganarle a cualquier utilidad de display. */
+  [hidden] {
+    display: none !important;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-ink);
+    color: var(--color-pastel);
+    font-family: var(--font-body);
+    overflow-x: hidden;
+  }
+
+  /* Los títulos pixel no deben suavizarse */
+  .font-title {
+    -webkit-font-smoothing: none;
+  }
+
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-track {
+    background: var(--color-inset);
+    border-left: 2px solid #000;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-primary);
+    border: 2px solid #000;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* ==========================================================
+   COMPONENTES PIXEL — bordes duros, sombras sin blur
+   ========================================================== */
+@layer components {
+  /* --- Overlay CRT (scanlines + viñeta) --- */
+  .crt-overlay::before,
+  .crt-overlay::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .crt-overlay::before {
+    background:
+      linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%),
+      linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+    background-size: 100% 4px, 6px 100%;
+    opacity: 0.85;
+    z-index: 60;
+  }
+
+  .crt-overlay::after {
+    background: radial-gradient(circle at center, transparent 65%, rgba(0, 0, 0, 0.65) 100%);
+    z-index: 61;
+  }
+
+  /* --- Cajas --- */
+  .pixel-box {
+    border: 4px solid #000;
+    background-color: var(--color-panel);
+    box-shadow:
+      4px 4px 0 #000,
+      -2px -2px 0 var(--color-secondary) inset,
+      2px 2px 0 var(--color-edge) inset;
+  }
+
+  .pixel-box-gold {
+    border: 4px solid #000;
+    background-color: #2b1800;
+    box-shadow:
+      4px 4px 0 #000,
+      -2px -2px 0 var(--color-tertiary-light) inset,
+      2px 2px 0 var(--color-tertiary-dark) inset;
+  }
+
+  .pixel-box-inset {
+    border: 4px solid #000;
+    background-color: var(--color-inset);
+    box-shadow:
+      inset 4px 4px 0 #000,
+      inset -2px -2px 0 var(--color-primary);
+  }
+
+  /* --- Botones --- */
+  .pixel-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 4px solid #000;
+    background: var(--color-primary);
+    color: #fff;
+    font-family: var(--font-title);
+    -webkit-font-smoothing: none;
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.05s ease;
+    box-shadow:
+      4px 4px 0 #000,
+      inset -4px -4px 0 var(--color-primary-dark),
+      inset 4px 4px 0 var(--color-primary-light);
+  }
+
+  .pixel-btn:hover { background: #ff4770; }
+
+  .pixel-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow:
+      2px 2px 0 #000,
+      inset -2px -2px 0 var(--color-primary-dark),
+      inset 2px 2px 0 var(--color-primary-light);
+  }
+
+  /* Modificadores: se usan junto a .pixel-btn */
+  .pixel-btn-secondary {
+    background: #5b21b6;
+    color: var(--color-pastel);
+    box-shadow:
+      4px 4px 0 #000,
+      inset -4px -4px 0 #240c42,
+      inset 4px 4px 0 #b269ff;
+  }
+
+  .pixel-btn-secondary:hover { background: #7028db; }
+
+  .pixel-btn-secondary:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 #000;
+  }
+
+  .pixel-btn-gold {
+    background: var(--color-tertiary);
+    color: #000;
+    box-shadow:
+      4px 4px 0 #000,
+      inset -4px -4px 0 var(--color-tertiary-dark),
+      inset 4px 4px 0 #fff275;
+  }
+
+  .pixel-btn-gold:hover { background: #ffd000; }
+
+  /* --- Ítem legendario con glow al hover --- */
+  .rare-item-glow { position: relative; }
+  .rare-item-glow:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 0 4px #000, 0 0 16px var(--color-tertiary), 6px 6px 0 #000;
+  }
+
+  /* --- Estrella de fondo --- */
+  .pixel-star {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background-color: var(--color-pastel);
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  /* --- Foco visible y consistente sobre fondo oscuro --- */
+  :focus-visible {
+    outline: 3px solid var(--color-tertiary);
+    outline-offset: 2px;
+  }
+}

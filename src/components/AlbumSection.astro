@@ -1,0 +1,22 @@
+---
+import SectionBanner from "./SectionBanner.astro";
+import AlbumItemCard from "./AlbumItemCard.astro";
+import { albumItems } from "../data/site";
+---
+
+<section id="album-section" class="mb-14 scroll-mt-6">
+  <SectionBanner
+    emoji="🏆"
+    title="Álbum de logros desbloqueados"
+    subtitle="Colección de ítems legendarios de nuestra historia juntos (Toca para inspeccionar)"
+  >
+    <div slot="aside" class="ml-auto hidden items-center gap-1.5 font-ui text-xs text-tertiary sm:flex">
+      <span>{albumItems.length}/{albumItems.length} ITEMS</span>
+      <span class="inline-block h-3 w-3 border border-black bg-tertiary"></span>
+    </div>
+  </SectionBanner>
+
+  <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    {albumItems.map((item) => <AlbumItemCard item={item} />)}
+  </div>
+</section>
