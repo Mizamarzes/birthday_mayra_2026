@@ -1,22 +1,56 @@
 ---
 import SectionBanner from "./SectionBanner.astro";
 import ContinueBar from "./ContinueBar.astro";
+import PhotoFrame from "./PhotoFrame.astro";
 import { mapNodes } from "../data/site";
 
-/** Color del tramo de riel que sale de cada nodo hacia el siguiente. */
-const railColors = ["bg-primary", "bg-secondary", "bg-tertiary"];
+/*
+ * Carretera serpenteante.
+ *
+ * El trazado es un SVG con `preserveAspectRatio="none"`, así que el viewBox se estira
+ * hasta llenar el contenedor: el eje X va de 0 a 100 (= 0% a 100% del ancho) y el eje Y
+ * usa 100 unidades por estación. Las estaciones se posicionan con `left` en porcentaje y
+ * `top: calc(var(--row-h) * (i + 0.5))`, que escala igual que el viewBox, así que el
+ * círculo siempre cae exactamente sobre el asfalto.
+ *
+ * `vector-effect="non-scaling-stroke"` evita que el estirado deforme el ancho de la ruta.
+ */
+const ROW = 100;
+const viewH = mapNodes.length * ROW;
+
+/**
+ * Dibuja la ruta alternando estaciones entre dos columnas.
+ * En móvil la amplitud es chica (la ruta baja pegada a la izquierda y las tarjetas van
+ * todas a la derecha, que es el único reparto que deja el texto legible); en escritorio
+ * zigzaguea de lado a lado y las tarjetas alternan.
+ */
+function buildPath(xa: number, xb: number): string {
+  const xs = mapNodes.map((_, i) => (i % 2 === 0 ? xa : xb));
+  const ys = mapNodes.map((_, i) => i * ROW + ROW / 2);
+  let d = `M ${xs[0]},0 L ${xs[0]},${ys[0]}`;
+  for (let i = 1; i < mapNodes.length; i++) {
+    d += ` C ${xs[i - 1]},${ys[i - 1]! + 58} ${xs[i]},${ys[i]! - 58} ${xs[i]},${ys[i]}`;
+  }
+  return `${d} L ${xs[mapNodes.length - 1]},${viewH}`;
+}
+
+/** Los valores tienen que coincidir con las variables --x-a / --x-b de los estilos. */
+const pathNarrow = buildPath(6, 18);
+const pathWide = buildPath(26, 74);
+
+const stations = mapNodes.map((node, i) => ({ node, i, onLeft: i % 2 === 0 }));
 ---
 
 <section data-screen="map" hidden>
   <SectionBanner
     emoji="🗺️"
-    title="Mapa de niveles: nuestro recorrido"
-    subtitle="Tocá cada hito para revelarlo. Los cuatro tienen que estar descubiertos para seguir."
+    title="La ruta: nuestro recorrido"
+    subtitle={`Tocá la foto de cada estación para desbloquearla. Las ${mapNodes.length} tienen que estar reveladas para seguir.`}
     accent="bg-tertiary"
     accentText="text-black"
   />
 
-  <div class="pixel-box-inset relative overflow-hidden bg-void p-4 sm:p-6 md:p-8">
+  <div class="pixel-box-inset relative overflow-hidden bg-void p-3 sm:p-5 md:p-6">
     <!-- Trama de puntos de fondo -->
     <div
       class="pointer-events-none absolute inset-0 bg-[radial-gradient(#ff4b93_1px,transparent_1px)] opacity-10 [background-size:16px_16px]"
@@ -24,81 +58,244 @@ const railColors = ["bg-primary", "bg-secondary", "bg-tertiary"];
     >
     </div>
 
-    <ol class="relative z-10 grid list-none grid-cols-1 gap-6 p-0 md:grid-cols-4 md:gap-4">
-      {
-        mapNodes.map((node, i) => (
-          <li class="group relative flex h-full flex-col items-center text-center">
-            <span
-              class:list={[
-                "mb-2 flex items-center gap-1.5 border border-tertiary bg-black px-2 py-0.5 font-ui text-[10px] text-tertiary shadow-[2px_2px_0_#000]",
-                node.current && "animate-pulse",
-              ]}
-            >
-              {node.world}
-              <span data-inspect-mark="map" data-inspect-id={String(i)} hidden class="text-neon">
-                ✓
-              </span>
-            </span>
+    <div class="road relative" style={`height: calc(var(--row-h) * ${mapNodes.length})`}>
+      <!-- El asfalto -->
+      <svg
+        class="pointer-events-none absolute inset-0 h-full w-full"
+        viewBox={`0 0 100 ${viewH}`}
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
+        <g class="road-narrow">
+          <path d={pathNarrow} class="road-edge" fill="none" vector-effect="non-scaling-stroke"></path>
+          <path d={pathNarrow} class="road-body" fill="none" vector-effect="non-scaling-stroke"></path>
+          <path d={pathNarrow} class="road-dashes" fill="none" vector-effect="non-scaling-stroke"></path>
+        </g>
+        <g class="road-wide">
+          <path d={pathWide} class="road-edge" fill="none" vector-effect="non-scaling-stroke"></path>
+          <path d={pathWide} class="road-body" fill="none" vector-effect="non-scaling-stroke"></path>
+          <path d={pathWide} class="road-dashes" fill="none" vector-effect="non-scaling-stroke"></path>
+        </g>
+      </svg>
 
-            {/* El riel vive junto al icono para que conecte los nodos, no las tarjetas. */}
-            <div class="relative flex w-full items-center justify-center">
-              {i < mapNodes.length - 1 && (
-                <span
-                  class:list={[
-                    "absolute left-1/2 top-1/2 -z-10 hidden h-3 w-[calc(100%+1rem)] -translate-y-1/2 border-y-2 border-black md:block",
-                    railColors[i],
-                  ]}
-                  aria-hidden="true"
-                />
-              )}
+      <ol class="list-none p-0">
+        {
+          stations.map(({ node, i, onLeft }) => (
+            <li class="group absolute inset-x-0" style={`top: calc(var(--row-h) * ${i + 0.5})`}>
+              {/* Estación: el número va sobre el asfalto */}
               <div
                 class:list={[
-                  "flex h-16 w-16 items-center justify-center border-4 border-black shadow-[4px_4px_0_#000] transition-transform group-hover:-translate-y-1",
-                  node.nodeClass,
+                  "absolute z-20 -translate-x-1/2 -translate-y-1/2",
+                  onLeft ? "st-a" : "st-b",
                 ]}
-                aria-hidden="true"
               >
-                <span class="text-2xl">{node.emoji}</span>
-              </div>
-            </div>
-
-            <div class="relative mt-3 flex w-full max-w-[200px] grow">
-              <div class:list={["w-full p-3", node.current ? "pixel-box-gold" : "pixel-box"]}>
-                <span class:list={["block font-ui text-[10px]", node.current ? "text-tertiary" : "text-neon"]}>
-                  {node.date}
+                <div
+                  class:list={[
+                    "station flex items-center justify-center rounded-full border-4 border-black font-title text-white shadow-[4px_4px_0_#000]",
+                    node.nodeClass,
+                    node.current && "animate-pulse",
+                  ]}
+                >
+                  <span class="drop-shadow-[1px_1px_0_#000]">{i + 1}</span>
+                </div>
+                <span
+                  data-inspect-mark="map"
+                  data-inspect-id={String(i)}
+                  hidden
+                  class="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full border-2 border-black bg-neon font-ui text-[10px] font-bold text-black"
+                >
+                  ✓
                 </span>
-                <h3 class="my-1 font-title text-xs text-white">{node.title}</h3>
-                <p class:list={["font-body text-xs leading-relaxed", node.current ? "text-pastel" : "text-muted"]}>
-                  &ldquo;{node.lore}&rdquo;
-                </p>
-                {node.current ? (
-                  <div class="mt-2 animate-pixel-blink font-ui text-[9px] text-neon">▶ EN JUEGO</div>
-                ) : (
-                  <div class="mt-2 font-ui text-[9px] text-tertiary">★ CLEARED</div>
-                )}
               </div>
 
-              <button
-                type="button"
-                data-inspect="map"
-                data-inspect-id={String(i)}
-                aria-label={`Revelar ${node.world}`}
-                class="pixel-box absolute inset-0 flex cursor-pointer flex-col items-center justify-center gap-1 p-3 hover:bg-edge"
+              {/* Tarjeta de la estación, al costado de la ruta */}
+              <div
+                class:list={[
+                  "absolute top-1/2 z-10 -translate-y-1/2",
+                  onLeft ? "station-card-right" : "station-card-left",
+                ]}
               >
-                <span class="text-lg" aria-hidden="true">🔒</span>
-                <span class="font-ui text-[10px] tracking-widest text-tertiary">TOCAR PARA REVELAR</span>
-              </button>
-            </div>
-          </li>
-        ))
-      }
-    </ol>
+                <div
+                  class:list={[
+                    "flex max-w-[340px] flex-col gap-2.5 p-2.5 sm:flex-row sm:gap-3.5 sm:p-3",
+                    onLeft ? "card-hug-start" : "card-hug-end",
+                    node.current ? "pixel-box-gold" : "pixel-box",
+                  ]}
+                >
+                  {/* Foto: tapada hasta que la desbloquee */}
+                  <PhotoFrame
+                    dir="timeline"
+                    file={node.photoFile}
+                    alt={node.title}
+                    widths={[200, 280, 400]}
+                    sizes="(min-width: 640px) 120px, 250px"
+                    class="h-[120px] w-full shrink-0 sm:h-[120px] sm:w-[120px]"
+                  >
+                    <div
+                      slot="empty"
+                      class="flex h-full w-full flex-col items-center justify-center gap-1 p-1 text-center"
+                    >
+                      <span class="text-xl" aria-hidden="true">
+                        {node.emoji}
+                      </span>
+                      <span class="font-ui text-[8px] leading-tight text-muted">FALTA LA FOTO</span>
+                    </div>
 
-    <p class="mt-6 text-center font-ui text-xs text-muted">
-      <span class="text-tertiary">CONSEJO RETRO:</span> Cada hito desbloqueó un bonus permanente de
-      complicidad y risas infinitas.
+                    <button
+                      type="button"
+                      data-inspect="map"
+                      data-inspect-id={String(i)}
+                      aria-label={`Desbloquear la foto de ${node.title}`}
+                      class="absolute inset-0 flex cursor-pointer flex-col items-center justify-center gap-1 bg-panel hover:bg-edge"
+                    >
+                      <span class="text-lg" aria-hidden="true">
+                        🔒
+                      </span>
+                      <span class="font-ui text-[8px] leading-tight tracking-widest text-tertiary">
+                        TOCAR
+                      </span>
+                    </button>
+                  </PhotoFrame>
+
+                  <div class="min-w-0 grow">
+                    <span
+                      class:list={[
+                        "inline-block border border-tertiary bg-black px-1.5 py-0.5 font-ui text-[8px] text-tertiary",
+                        node.current && "animate-pulse",
+                      ]}
+                    >
+                      {node.world}
+                    </span>
+                    <h3 class="mt-1.5 font-title text-[10px] leading-tight text-white sm:text-xs">
+                      {node.title}
+                    </h3>
+                    <p
+                      class:list={[
+                        "mt-1 line-clamp-3 font-body text-[11px] leading-snug sm:text-xs",
+                        node.current ? "text-pastel" : "text-muted",
+                      ]}
+                    >
+                      &ldquo;{node.lore}&rdquo;
+                    </p>
+                    <div class="mt-1.5 flex flex-wrap items-center justify-between gap-1 font-ui text-[8px]">
+                      <span class={node.current ? "text-tertiary" : "text-neon"}>{node.date}</span>
+                      {node.current ? (
+                        <span class="animate-pixel-blink text-neon">▶ EN JUEGO</span>
+                      ) : (
+                        <span class="text-tertiary">★ CLEARED</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+
+    <p class="mt-4 text-center font-ui text-xs text-muted">
+      <span class="text-tertiary">CONSEJO RETRO:</span> Cada parada de la ruta desbloqueó un bonus
+      permanente de complicidad y risas infinitas.
     </p>
   </div>
 
-  <ContinueBar screen="map" label="IR AL MINIJUEGO ▶" total={mapNodes.length} unit="HITOS" counter="map" />
+  <ContinueBar
+    screen="map"
+    label="IR AL MINIJUEGO ▶"
+    total={mapNodes.length}
+    unit="ESTACIONES"
+    counter="map"
+  />
 </section>
+
+<style>
+  .road {
+    /* Columnas donde se paran las estaciones. Deben coincidir con buildPath(). */
+    --x-a: 6%;
+    --x-b: 18%;
+    --row-h: 300px;
+  }
+
+  /* --- Asfalto: borde negro, cuerpo, línea discontinua --- */
+  .road-edge {
+    stroke: #000;
+    stroke-width: 34px;
+    stroke-linecap: square;
+  }
+  .road-body {
+    stroke: var(--color-bezel);
+    stroke-width: 26px;
+    stroke-linecap: square;
+  }
+  .road-dashes {
+    stroke: var(--color-tertiary);
+    stroke-width: 3px;
+    stroke-dasharray: 12 16;
+  }
+  .road-wide {
+    display: none;
+  }
+
+  .st-a {
+    left: var(--x-a);
+  }
+  .st-b {
+    left: var(--x-b);
+  }
+
+  .station {
+    height: 46px;
+    width: 46px;
+    font-size: 13px;
+  }
+
+  /* En móvil todas las tarjetas van a la derecha del asfalto: no hay ancho para alternar. */
+  .station-card-left,
+  .station-card-right {
+    left: calc(var(--x-b) + 30px);
+    right: 0;
+  }
+  .card-hug-start,
+  .card-hug-end {
+    margin-right: auto;
+  }
+
+  @media (min-width: 640px) {
+    .road {
+      --x-a: 26%;
+      --x-b: 74%;
+      --row-h: 280px;
+    }
+    .road-narrow {
+      display: none;
+    }
+    .road-wide {
+      display: block;
+    }
+    .road-edge {
+      stroke-width: 40px;
+    }
+    .road-body {
+      stroke-width: 32px;
+    }
+    .station {
+      height: 60px;
+      width: 60px;
+      font-size: 16px;
+    }
+    /* Acá sí alternan: la tarjeta se apoya contra el costado del asfalto. */
+    .station-card-right {
+      left: calc(var(--x-a) + 86px);
+      right: 0;
+    }
+    .station-card-left {
+      left: 0;
+      right: calc(100% - var(--x-b) + 86px);
+    }
+    .card-hug-end {
+      margin-left: auto;
+      margin-right: 0;
+    }
+  }
+</style>

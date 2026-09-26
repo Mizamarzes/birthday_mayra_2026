@@ -2,10 +2,20 @@
  * Contenido de la página. Todo está quemado acá a propósito:
  * es el único archivo a tocar cuando lleguen los datos reales.
  */
+/*
+ * --- FOTOS ---
+ * Hay dos carpetas, una por sección:
+ *   src/assets/album/     → las fotos del álbum de logros  (campo photoFile de albumItems)
+ *   src/assets/timeline/  → las fotos de la ruta           (campo photoFile de mapNodes)
+ * Se referencian solo por nombre de archivo; no hay que importar nada. Si el nombre no
+ * existe en esa carpeta, falla el build y te dice cuáles hay.
+ */
 
 export const player = {
-  /** Nombre de la cumpleañera. Aparece en el HUD, el título y la dedicatoria. */
-  name: "MAYRA",
+  /** Cómo se la llama en el HUD, el título grande y los créditos (todo en mayúscula). */
+  name: "MI AMOR",
+  /** La misma persona, pero dentro de una frase. Se usa en la dedicatoria. */
+  nameSoft: "mi amor",
   /** Quién firma la página. */
   from: "TU NOVIO",
   year: 2026,
@@ -43,9 +53,10 @@ export interface AlbumItem {
   id: string;
   rarity: Rarity;
   emoji: string;
-  /** Marco de la foto: reemplazar `photo` por la ruta real en /public. */
+  /** Texto del marco vacío, mientras no haya foto. */
   photoLabel: string;
-  photo?: string;
+  /** Nombre del archivo dentro de `src/assets/album/`. Sin esto, se muestra el marco vacío. */
+  photoFile?: string;
   title: string;
   lore: string;
   exp: string;
@@ -56,60 +67,143 @@ export const albumItems: AlbumItem[] = [
   {
     id: "001",
     rarity: "SSS",
-    emoji: "☕",
-    photoLabel: "[FOTO 1: PRIMERA CITA]",
-    title: "EL DÍA QUE EMPEZÓ TODO",
-    lore: "Los nervios más hermosos del mundo, un café compartido y risas interminables.",
+    emoji: "🛵",
+    photoLabel: "[FOTO: LA MOTO]",
+    photoFile: "9-moto-cola.jpeg",
+    title: "MI COPILOTA",
+    lore: "Lista para arrancar. Cualquier destino sirve si vas atrás.",
     exp: "+500 PTS",
-    status: "INOLVIDABLE",
+    status: "EN RUTA",
   },
   {
     id: "002",
+    rarity: "COMMON",
+    emoji: "🍿",
+    photoLabel: "[FOTO: TARDE DE PELI]",
+    photoFile: "10-peli-piedec.jpeg",
+    title: "TARDE DE PELI",
+    lore: "Función privada: vos, yo y cero atención a la pantalla.",
+    exp: "+450 PTS",
+    status: "PLAN PERFECTO",
+  },
+  {
+    id: "003",
     rarity: "EPIC",
-    emoji: "✈️",
-    photoLabel: "[FOTO 2: PRIMER VIAJE]",
-    title: "EXPEDICIÓN JUNTOS",
-    lore: "Perdidos en una ciudad nueva pero con la brújula perfecta en tus manos.",
+    emoji: "💋",
+    photoLabel: "[FOTO: EL BESOTE]",
+    photoFile: "11-besote.jpeg",
+    title: "EL BESOTE",
+    lore: "Con el agua de fondo y el mundo entero en pausa.",
+    exp: "+800 PTS",
+    status: "INOLVIDABLE",
+  },
+  {
+    id: "004",
+    rarity: "SPECIAL",
+    emoji: "🎃",
+    photoLabel: "[FOTO: DISFRACES]",
+    photoFile: "12-disfraces.jpeg",
+    title: "MODO DISFRAZ",
+    lore: "Nos tomamos el disfraz demasiado en serio, como corresponde.",
+    exp: "+700 PTS",
+    status: "ICÓNICO",
+  },
+  {
+    id: "005",
+    rarity: "EPIC",
+    emoji: "🌆",
+    photoLabel: "[FOTO: BESO CON VISTA]",
+    photoFile: "13-beso-mano-.jpeg",
+    title: "BESO CON VISTA",
+    lore: "Toda la ciudad abajo y yo mirando para otro lado.",
+    exp: "+850 PTS",
+    status: "DE PELÍCULA",
+  },
+  {
+    id: "006",
+    rarity: "COMMON",
+    emoji: "🛌",
+    photoLabel: "[FOTO: PIJAMAS]",
+    photoFile: "14-pijamas-geis.jpeg",
+    title: "PIJAMAS A JUEGO",
+    lore: "El nivel de cursilería que solo nos permitimos en casa.",
+    exp: "+400 PTS",
+    status: "HOGAR",
+  },
+  {
+    id: "007",
+    rarity: "RARE",
+    emoji: "🍻",
+    photoLabel: "[FOTO: PRIMERA BORRACHERA]",
+    photoFile: "15-primera-borrachera.jpeg",
+    title: "LA PRIMERA BORRACHERA",
+    lore: "Ni idea de qué hablamos esa noche, pero nos reímos muchísimo.",
+    exp: "+650 PTS",
+    status: "LEYENDA",
+  },
+  {
+    id: "008",
+    rarity: "RARE",
+    emoji: "🎡",
+    photoLabel: "[FOTO: PAMPLONA]",
+    photoFile: "16-pamplona.jpeg",
+    title: "PAMPLONA",
+    lore: "Una banca, un columpio y todo el día por delante.",
+    exp: "+600 PTS",
+    status: "ESCAPADA",
+  },
+  {
+    id: "009",
+    rarity: "COMMON",
+    emoji: "🤠",
+    photoLabel: "[FOTO: DOLLARCITY]",
+    photoFile: "17-dollarcity.jpeg",
+    title: "MODO DOLLARCITY",
+    lore: "Probarse todos los sombreros del pasillo cuenta como cita.",
+    exp: "+420 PTS",
+    status: "SIN VERGÜENZA",
+  },
+  {
+    id: "010",
+    rarity: "SPECIAL",
+    emoji: "🚶",
+    photoLabel: "[FOTO: LA CAMINATA]",
+    photoFile: "18-caminata.jpeg",
+    title: "LA CAMINATA",
+    lore: "Caminar sin rumbo, que es nuestra forma favorita de hablar.",
+    exp: "+550 PTS",
+    status: "TRANQUILO",
+  },
+  {
+    id: "011",
+    rarity: "EPIC",
+    emoji: "🏍️",
+    photoLabel: "[FOTO: MOTO MOTO]",
+    photoFile: "19-motomoto.jpeg",
+    title: "MOTO MOTO",
+    lore: "Cascos puestos y esa sonrisa tuya antes de arrancar.",
     exp: "+750 PTS",
     status: "AVENTURA",
   },
   {
-    id: "003",
-    rarity: "RARE",
-    emoji: "🎸",
-    photoLabel: "[FOTO 3: NOCHE ÉPICA]",
-    title: "BANDA SONORA",
-    lore: "Cantando desafinados a todo pulmón en el show de nuestras vidas.",
-    exp: "+600 PTS",
-    status: "EN SINTONÍA",
-  },
-  {
-    id: "004",
-    rarity: "COMMON",
-    emoji: "🍿",
-    photoLabel: "[FOTO 4: DOMINGOS]",
-    title: "REFUGIO CÁLIDO",
-    lore: "Cero planes, mil abrazos, pizza fría y tu cabeza apoyada en mi hombro.",
-    exp: "+450 PTS",
-    status: "HOGAR",
-  },
-  {
-    id: "005",
+    id: "012",
     rarity: "SPECIAL",
-    emoji: "🍝",
-    photoLabel: "[FOTO 5: RISAS]",
-    title: "COCINEROS AMATEUR",
-    lore: "Esa receta que salió desastrosa pero terminó siendo la cena más divertida.",
-    exp: "+550 PTS",
-    status: "TENTADAS",
+    emoji: "📱",
+    photoLabel: "[FOTO: CARCASAS]",
+    photoFile: "19-carcasas-celular.jpeg",
+    title: "CARCASAS A JUEGO",
+    lore: "Detalle chiquito que nos delata en cada foto.",
+    exp: "+500 PTS",
+    status: "EQUIPO",
   },
   {
-    id: "006",
+    id: "013",
     rarity: "LEGENDARY",
-    emoji: "👑",
-    photoLabel: "[FOTO 6: TU SONRISA]",
-    title: "MI JUGADORA FAVORITA",
-    lore: "Esa foto espontánea donde tenés la sonrisa más radiante de todo el mapa.",
+    emoji: "💛",
+    photoLabel: "[FOTO: FLORES AMARILLAS]",
+    photoFile: "6-flores-amarillas.avif",
+    title: "FLORES AMARILLAS",
+    lore: "Tu sonrisa con las flores en la mano. Esta le gana a todas.",
     exp: "+9999 PTS",
     status: "PERFECTA",
   },
@@ -118,6 +212,8 @@ export const albumItems: AlbumItem[] = [
 export interface MapNode {
   world: string;
   emoji: string;
+  /** Nombre del archivo en `src/assets/album/`. Sin esto, la estación muestra el slot vacío. */
+  photoFile?: string;
   /** Color de fondo del nodo en el mapa. */
   nodeClass: string;
   date: string;
@@ -130,35 +226,84 @@ export interface MapNode {
 export const mapNodes: MapNode[] = [
   {
     world: "MUNDO 1-1",
-    emoji: "🌱",
+    emoji: "✨",
     nodeClass: "bg-primary",
-    date: "[HITO 1 - FECHA]",
-    title: "EL COMIENZO",
-    lore: "El primer 'hola' y la chispa que encendió esta aventura.",
+    photoFile: "21-nos-conocimos.jpeg",
+    date: "[FECHA]",
+    title: "NOS CONOCIMOS",
+    lore: "El primer 'hola' y la chispa que encendió todo esto.",
   },
   {
     world: "MUNDO 1-2",
     emoji: "💖",
     nodeClass: "bg-secondary",
-    date: "[HITO 2 - FECHA]",
-    title: "OFICIALMENTE NOVIOS",
-    lore: "El beso bajo la lluvia y la decisión más hermosa: caminar a la par.",
+    photoFile: "7-noviecitos.avif",
+    date: "[FECHA]",
+    title: "NOVIECITOS",
+    lore: "Se acabó el disimulo: oficialmente juntos.",
   },
   {
     world: "MUNDO 1-3",
-    emoji: "🗝️",
+    emoji: "🎓",
     nodeClass: "bg-[#a855f7]",
-    date: "[HITO 3 - FECHA]",
-    title: "NUESTRA LLAVE",
-    lore: "Armando juntos un espacio que se siente 100% como nuestro hogar.",
+    photoFile: "5-grafuacion-campus.avif",
+    date: "[FECHA]",
+    title: "ME GRADUÉ",
+    lore: "Un logro tachado de la lista, con vos ahí para verlo.",
+  },
+  {
+    world: "MUNDO 1-4",
+    emoji: "🎁",
+    nodeClass: "bg-tertiary",
+    photoFile: "4-cumple-juan.avif",
+    date: "[FECHA]",
+    title: "MI CUMPLE",
+    lore: "Mi cumpleaños y todo lo que me preparaste.",
+  },
+  {
+    world: "MUNDO 1-5",
+    emoji: "🏞️",
+    nodeClass: "bg-cyan",
+    photoFile: "20-guatoque.jpeg",
+    date: "[FECHA]",
+    title: "GUATOQUE",
+    lore: "Salir de la rutina y perdernos un rato juntos.",
+  },
+  {
+    world: "MUNDO 1-6",
+    emoji: "🎂",
+    nodeClass: "bg-secondary",
+    photoFile: "3-tu-cumple.avif",
+    date: "[FECHA]",
+    title: "TU CUMPLE",
+    lore: "Tu día, y yo mirándote como siempre.",
+  },
+  {
+    world: "MUNDO 1-7",
+    emoji: "🌊",
+    nodeClass: "bg-neon",
+    photoFile: "2-playa.avif",
+    date: "[FECHA]",
+    title: "LA PLAYA",
+    lore: "Sol, agua y esa sonrisa que aparece lejos de todo.",
+  },
+  {
+    world: "MUNDO 1-8",
+    emoji: "🏔️",
+    nodeClass: "bg-[#a855f7]",
+    photoFile: "1-zapatoca.avif",
+    date: "[FECHA]",
+    title: "ZAPATOCA",
+    lore: "Cascos puestos y cero miedo. Otro viaje para la colección.",
   },
   {
     world: "★ HOY ★",
     emoji: "🏰",
     nodeClass: "bg-tertiary",
-    date: "[HITO 4 - FECHA]",
-    title: "TU CUMPLEAÑOS",
-    lore: "Celebrando un año más de tu vida y todo el futuro por delante.",
+    photoFile: "8-ahora.jpeg",
+    date: "[FECHA]",
+    title: "AHORA",
+    lore: "Acá estamos, celebrando un año más tuyo y todo lo que falta.",
     current: true,
   },
 ];
@@ -173,67 +318,49 @@ export interface TriviaQuestion {
 
 export const triviaQuestions: TriviaQuestion[] = [
   {
-    question: "¿En qué lugar tuvimos nuestra primera cita inolvidable?",
+    question: "¿Si tuviera que elegir una bebida cual elegiria?",
     options: [
-      "En esa cafetería pequeña que nos encantó",
-      "En el cine mirando una peli de terror",
-      "Caminando por el parque con helado",
-      "En una pizzería de trasnoche",
-    ],
-    correct: 0,
-    comment: "¡Exacto! Pedimos ese café y nos quedamos charlando horas.",
-  },
-  {
-    question: "¿Cuál es mi comida favorita que siempre me hace sonreír?",
-    options: [
-      "Hamburguesa con mil salsas",
-      "Las pastas caseras que hacemos juntos",
-      "Sushi los fines de semana",
-      "Pizza fría del día siguiente",
-    ],
-    correct: 1,
-    comment: "¡Sos una genia! Las pastas compartidas son insuperables.",
-  },
-  {
-    question: "¿Qué es lo primero que pensé cuando te vi por primera vez?",
-    options: [
-      "'Ojalá le caiga bien mi remera'",
-      "'Tiene la sonrisa más hermosa que vi en mi vida'",
-      "'Qué nervios, no sé qué decir'",
-      "'Definitivamente esta chica es de otro planeta'",
-    ],
-    correct: 1,
-    comment: "¡Totalmente! Quedé hipnotizado con tu sonrisa desde el segundo cero.",
-  },
-  {
-    question: "¿Cuál es nuestro 'meme' o chiste interno favorito?",
-    options: [
-      "Esa voz rara que hacemos para quejarnos",
-      "El baile ridículo cuando estamos felices",
-      "El apodo secreto que solo nosotros sabemos",
-      "¡Todas las anteriores son súper nuestras!",
+      "Agua",
+      "Coca-Cola full azucar",
+      "jugo de guanabana",
+      "jugo hit",
     ],
     correct: 3,
-    comment: "¡100% real! Tenemos un diccionario propio de locuras.",
+    comment: "Jugito god.",
   },
   {
-    question: "¿Quién ama más a quién en esta relación?",
+    question: "¿Quien dijo la frase poetica 'Las papas locas son papas normales'?",
     options: [
-      "Empate técnico legendario",
-      "Yo a vos, por goleada",
-      "Vos a mí, sin dudas",
-      "Un amor mutuo e infinito nivel 99",
+      "Pedro nel",
+      "Abelardo",
+      "Juan Contreras",
+      "Paco",
     ],
-    correct: 3,
-    comment: "¡Respuesta perfecta! Amor infinito de 16-bit.",
+    correct: 2,
+    comment: "Un desentendido por la sociedad.",
+  },
+  {
+    question: "¿Que es un Sistema Tipo SAS?",
+    options: [
+      "Es el backend y el frontend de un sistema de almacenamiento en la nube.",
+      "Son los aplicativos hechos para manejar diversos clientes, cada uno con sus configuraciones lo que hace que se evite la creacion de proyectos para cada cliente, lo que ahorra tiempo y recursos.",
+      "Un sistema de almacenamiento en la nube que permite a los usuarios acceder a sus archivos desde cualquier lugar y dispositivo.",
+      "Es una aplicacion mobile que permite a los usuarios acceder a servicios de almacenamiento en la nube y sincronización de archivos de manera segura y eficiente.",
+    ],
+    correct: 1,
+    comment: "¡Se lo he explicado miles de veces y siempre se duerme!",
   },
 ];
 
 export const finale = {
-  /** Poné el archivo en /public/video.mp4 (o cambiá la ruta). */
-  videoSrc: "/video.mp4",
-  videoLabel: "[VIDEO.MP4]",
-  dedicationTitle: `Para ${player.name}, la dueña de mi corazón:`,
+  /** Nombre del archivo dentro de `src/assets/video/`. */
+  videoFile: "video-01.mp4",
+  /**
+   * Proporción real del video, para que el marco no lo recorte.
+   * El actual es vertical (478x850). Si cambiás el archivo, actualizá esto.
+   */
+  videoAspect: "478 / 850",
+  dedicationTitle: `Para ${player.nameSoft}, la dueña de mi corazón:`,
   dedication: [
     "[MENSAJE / DEDICATORIA FINAL: Podés escribir acá tu carta de amor completa. " +
       "Gracias por cada partida compartida, por cada risa, por ser mi compañera incondicional " +

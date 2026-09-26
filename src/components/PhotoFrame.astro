@@ -1,0 +1,82 @@
+---
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+
+/*
+ * Marco de foto compartido por el álbum y las estaciones del mapa.
+ *
+ * El `import.meta.glob` vive acá y no en un `.ts` a propósito: importar una imagen
+ * desde un módulo `.ts` hace que Vite copie además el original sin optimizar a `dist/`.
+ * Resuelto desde un `.astro`, solo salen las variantes optimizadas.
+ */
+const photos = import.meta.glob<{ default: ImageMetadata }>(
+  "../assets/*/*.{webp,jpg,jpeg,png,avif}",
+  { eager: true },
+);
+
+/** Carpetas de fotos. Cada sección tiene la suya. */
+export type PhotoDir = "album" | "timeline";
+
+function resolvePhoto(dir: PhotoDir, file: string): ImageMetadata {
+  const entry = photos[`../assets/${dir}/${file}`];
+  if (!entry) {
+    const prefijo = `../assets/${dir}/`;
+    const disponibles = Object.keys(photos)
+      .filter((k) => k.startsWith(prefijo))
+      .map((k) => k.slice(prefijo.length))
+      .join(", ");
+    throw new Error(
+      `Foto no encontrada: src/assets/${dir}/${file}. ` +
+        `Archivos en esa carpeta: ${disponibles || "(ninguno)"}`,
+    );
+  }
+  return entry.default;
+}
+
+interface Props {
+  /** Carpeta donde buscar: `album` o `timeline`. */
+  dir: PhotoDir;
+  /** Nombre del archivo dentro de esa carpeta. Sin esto se muestra el slot "empty". */
+  file?: string;
+  alt: string;
+  /** Anchos generados. El slot del mapa es más chico que el del álbum. */
+  widths?: number[];
+  sizes?: string;
+  class?: string;
+}
+
+const {
+  dir,
+  file,
+  alt,
+  widths = [300, 400, 600, 800],
+  sizes = "300px",
+  class: className = "",
+} = Astro.props;
+---
+
+<div
+  class:list={[
+    "relative overflow-hidden border-4 border-black bg-void",
+    className,
+  ]}
+>
+  {
+    file ? (
+      <Image
+        src={resolvePhoto(dir, file)}
+        alt={alt}
+        width={400}
+        height={400}
+        widths={widths}
+        sizes={sizes}
+        format="webp"
+        loading="lazy"
+        class="album-photo absolute inset-0 h-full w-full object-cover"
+      />
+    ) : (
+      <slot name="empty" />
+    )
+  }
+  <slot />
+</div>

@@ -10,8 +10,8 @@ siguiente hay que completar la actual.
 | # | Pantalla | Qué hay que hacer |
 | :-- | :-- | :-- |
 | 1 | Inicio | Tocar PRESS START |
-| 2 | Álbum de logros | Inspeccionar los 6 ítems (cada uno revela su recuerdo) |
-| 3 | Mapa de niveles | Revelar los 4 hitos |
+| 2 | Álbum de logros | Inspeccionar los 13 ítems (cada uno revela su recuerdo) |
+| 3 | La ruta | Desbloquear la foto de las 9 estaciones |
 | 4 | Minijuego | Ganar la trivia. Hay 3 vidas y un botón de "modo trampa" si se queda sin |
 | 5 | Tu regalo | El video y la dedicatoria |
 
@@ -25,20 +25,32 @@ Todo el texto y los datos están quemados en **un solo archivo**: `src/data/site
 
 | Qué querés cambiar | Dónde |
 | :-- | :-- |
-| Nombre, quién firma, año, puntajes del HUD | `player` |
+| Cómo se la llama, quién firma, año, puntajes del HUD | `player` |
 | Nombre de cada pantalla en el indicador de etapa | `stages` |
 | Título, subtítulo y texto de la pantalla de inicio | `intro` |
-| Los 6 ítems del álbum (foto, título, lore, rareza) | `albumItems` |
-| Los 4 hitos del mapa de niveles | `mapNodes` |
+| Los ítems del álbum (foto, título, lore, rareza) | `albumItems` |
+| Las estaciones de la ruta (foto, título, fecha) | `mapNodes` |
 | Las 5 preguntas de la trivia | `triviaQuestions` |
 | Video final y dedicatoria | `finale` |
 
+> `player` tiene **dos** campos para el nombre: `name` en mayúscula (`MI AMOR`) para el HUD, el
+> título grande y los créditos, y `nameSoft` en minúscula (`mi amor`) para cuando va dentro de una
+> frase, como la dedicatoria. Cambiá los dos juntos.
+
 ### Fotos y video
 
-- **Fotos del álbum**: poné la imagen en `public/` (ej. `public/fotos/primera-cita.jpg`) y agregá
-  `photo: "/fotos/primera-cita.jpg"` al ítem correspondiente en `albumItems`. Mientras no haya
-  `photo`, la tarjeta muestra el marco punteado con el emoji y la etiqueta `[FOTO N: ...]`.
-- **Video del regalo**: dejá el archivo en `public/video.mp4` (o cambiá `finale.videoSrc`).
+- **Fotos**: hay una carpeta por sección — `src/assets/album/` para el álbum y
+  `src/assets/timeline/` para la ruta. Dejá la imagen en la que corresponda y poné su nombre en el
+  campo `photoFile` del ítem (`albumItems`) o de la estación (`mapNodes`). Nada más — no hay que importar
+  ni optimizar nada: Astro la redimensiona y la sirve en WebP (una foto de celular de 3000px queda
+  entre 8 y 40 kB). Mientras no haya `photoFile`, la tarjeta muestra el marco punteado con el emoji
+  y la etiqueta `[FOTO N: ...]`.
+
+  Si el nombre no coincide con ningún archivo, el build falla y te dice cuáles hay. Eso es a
+  propósito: mejor enterarte al compilar que con una foto rota en producción.
+- **Video del regalo**: está en `src/assets/video/video-01.mp4`. Para cambiarlo, dejá el nuevo en
+  esa carpeta y actualizá `finale.videoFile` y `finale.videoAspect` (la proporción del archivo, para
+  que el marco no lo recorte).
 
 ## Estructura
 
@@ -46,8 +58,12 @@ Todo el texto y los datos están quemados en **un solo archivo**: `src/data/site
 /
 ├── design/
 │   └── codigo_design_page.html   Diseño original de referencia (excluido de Tailwind)
-├── public/                       Assets estáticos: fotos, video, favicon
+├── public/                       Assets sin procesar: favicon
 └── src/
+    ├── assets/
+    │   ├── album/                Fotos del álbum      (Astro las optimiza)
+    │   ├── timeline/             Fotos de la ruta
+    │   └── video/                El video del regalo
     ├── components/               Secciones de la página
     ├── data/site.ts              ← TODO el contenido editable
     ├── layouts/Layout.astro      <head>, fuentes, overlay CRT

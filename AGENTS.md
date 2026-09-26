@@ -64,8 +64,8 @@ El orden y las etiquetas salen de `stages` en `src/data/site.ts`.
 | Pantalla | Condición para continuar |
 | :-- | :-- |
 | `start` | libre |
-| `album` | inspeccionar los 6 ítems |
-| `map` | revelar los 4 hitos |
+| `album` | inspeccionar los 13 ítems |
+| `map` | desbloquear la foto de las 9 estaciones |
 | `trivia` | ganar la trivia (o el botón de modo trampa) |
 | `final` | última |
 
@@ -95,6 +95,30 @@ La trivia es el único módulo que `screens.ts` maneja de forma explícita: `ini
 `TriviaController` y el controlador lo llama al entrar a esa pantalla (`showVictory()` si ya ganó,
 `restart({ silent: true })` si no). `onWin` marca el progreso, y de ahí sale la habilitación del
 botón de la pantalla de victoria.
+
+### La carretera del mapa
+
+`MapSection.astro` dibuja una ruta serpenteante en SVG y apoya las estaciones encima. La clave es
+que el SVG usa `preserveAspectRatio="none"`: el viewBox se estira hasta llenar el contenedor, con
+el eje X de 0 a 100 (= 0% a 100% del ancho) y 100 unidades de alto por estación. Las estaciones se
+posicionan con `left` en porcentaje y `top: calc(var(--row-h) * (i + 0.5))`, que escala igual, así
+que el círculo siempre cae sobre el asfalto sin importar el ancho. `vector-effect="non-scaling-stroke"`
+evita que el estirado deforme el ancho de la ruta.
+
+Hay **dos trazados** en el SVG y se alternan por breakpoint, porque la amplitud de la curva decide
+cuánto ancho queda para las tarjetas:
+
+- Móvil: la ruta baja por un canal angosto a la izquierda (`--x-a: 6%`, `--x-b: 18%`) y todas las
+  tarjetas van a la derecha, con la foto arriba del texto. Con la amplitud grande la columna de
+  texto quedaba en 78px y los títulos se cortaban.
+- Escritorio (≥640px): zigzaguea de lado a lado (`26%` / `74%`) y las tarjetas alternan.
+
+Las variables `--x-a` / `--x-b` del `<style>` **tienen que coincidir** con los argumentos de
+`buildPath()` en el frontmatter, o los círculos se despegan del asfalto.
+
+El margen entre tarjeta y asfalto (`calc(var(--x-a) + 86px)`) está calibrado para que la diagonal
+de la ruta no pase por debajo de ninguna tarjeta. Si cambiás la altura de las tarjetas, el largo
+de los tiradores de la curva (`± 58`) o la amplitud, hay que volver a verificarlo.
 
 ### Interactividad
 
@@ -127,15 +151,51 @@ excluido del escaneo de Tailwind con `@source not "../../design";` en `global.cs
 **vieja** (`#ff2a5f`, `#ff5c93`, `#3d1a6d`) y clases que ya no existen: consultalo para intención de
 diseño, nunca copies valores de ahí.
 
+**Las fotos llevan la clase `album-photo`**, que las saca del `image-rendering: pixelated` global.
+Sobre una foto escalada el `pixelated` no se ve pixel art, se ve dentado. Si alguna vez se quiere el
+efecto retro sobre las fotos, se borra esa regla de `global.css`.
+
 **Press Start 2P no tiene glifos acentuados** (Á, Í, Ó, Ñ). Caen a Space Mono, que se ve algo más
 chico dentro de un título pixel. Es un artefacto conocido y aceptado; no lo "arregles" sacando los
 acentos del español.
 
 ## Assets
 
-- Fotos del álbum: van en `public/` y se referencian con el campo `photo` del ítem en `albumItems`.
-  Sin `photo`, la tarjeta cae al marco punteado con emoji y etiqueta.
-- Video del regalo: `public/video.mp4`, o cambiá `finale.videoSrc`.
+**Las fotos van en `src/assets/`, no en `public/`, y hay una carpeta por sección:**
+
+| Carpeta | La usa | Campo |
+| :-- | :-- | :-- |
+| `src/assets/album/` | `albumItems` | `photoFile` |
+| `src/assets/timeline/` | `mapNodes` | `photoFile` |
+
+Los datos guardan solo el nombre del archivo; sin ese campo se muestra el marco vacío.
+
+`PhotoFrame.astro` es el único lugar que toca imágenes. Recibe `dir="album" | "timeline"`, resuelve
+el archivo con un `import.meta.glob` sobre `../assets/*/*` y lo pasa a `<Image>` de `astro:assets`
+con `format="webp"`. Lo usan `AlbumItemCard.astro` y `MapSection.astro`, cada uno con sus propios
+`widths`/`sizes` y su propio contenido para el slot `empty`. Dos razones para el glob en vez de un
+`import` por foto:
+
+1. El contenido sigue viviendo entero en `site.ts` — solo el nombre, sin boilerplate de imports.
+2. **Importar una imagen desde un `.ts` hace que Vite copie además el original sin optimizar a
+   `dist/`** (verificado: un origen de 409 kB se emitía entero y sin que nada lo referenciara).
+   Resuelto desde el `.astro`, solo salen las variantes optimizadas.
+
+Un `photoFile` que no exista **rompe el build** con un mensaje que lista los archivos de esa
+carpeta. Eso es deliberado: preferimos eso a un 404 silencioso en producción.
+
+No hace falta optimizar las fotos antes de subirlas. Sí importa la **resolución mínima**: Astro no
+amplía, así que un archivo más chico que el slot en pantallas retina (≈520 px para el álbum,
+≈240 px para la ruta) se ve borroso.
+
+
+**Video del regalo**: va en `src/assets/video/` y `finale.videoFile` guarda el nombre.
+`FinalSection.astro` lo resuelve con `import.meta.glob` igual que las fotos y falla el build si no
+existe. No hay optimización de video: Vite lo copia con hash y se sirve tal cual.
+
+El marco del reproductor toma su proporción de `finale.videoAspect` (hoy `478 / 850`, vertical) en
+vez de un `aspect-video` fijo. El video original era horizontal; con uno vertical, el `object-cover`
+del 16:9 recortaba casi todo. Si se cambia el archivo hay que actualizar ese valor.
 
 ## Documentación
 

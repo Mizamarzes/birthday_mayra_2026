@@ -257,6 +257,13 @@
     box-shadow: 0 0 0 4px #000, 0 0 16px var(--color-tertiary), 6px 6px 0 #000;
   }
 
+  /* Las fotos reales no heredan el `image-rendering: pixelated` del look arcade:
+     sobre una foto escalada eso no se ve pixel art, se ve como ruido y dentado.
+     Si preferís el efecto retro sobre las fotos, borrá esta regla. */
+  .album-photo {
+    image-rendering: auto;
+  }
+
   /* --- Estrella de fondo --- */
   .pixel-star {
     position: absolute;
