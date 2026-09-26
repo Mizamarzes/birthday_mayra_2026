@@ -5,7 +5,7 @@ import { finale } from "../data/site";
 const posterSvg = `<svg xmlns='http://www.w3.org/2000/svg' width='640' height='360' viewBox='0 0 640 360'><rect width='640' height='360' fill='%23120a20'/><text x='320' y='180' fill='%23ffd6e2' font-family='monospace' font-size='20' text-anchor='middle'>[PULSA PLAY PARA VER EL VIDEO.MP4]</text></svg>`;
 ---
 
-<section id="final-section" class="scroll-mt-6">
+<section data-screen="final" hidden>
   <SectionBanner
     emoji="🎁"
     title="Nivel final: tu regalo desbloqueado"
@@ -91,16 +91,17 @@ const posterSvg = `<svg xmlns='http://www.w3.org/2000/svg' width='640' height='3
     </div>
 
     <div class="mt-8 flex flex-col items-center gap-4 sm:flex-row">
-      <button type="button" id="btn-replay" class="pixel-btn px-8 py-4 text-xs tracking-wider sm:text-sm">
+      <button type="button" data-reset class="pixel-btn px-8 py-4 text-xs tracking-wider sm:text-sm">
         🔄 JUGAR DE NUEVO DESDE EL INICIO
       </button>
-      <a
-        href="#map-section"
+      <button
+        type="button"
+        data-goto="map"
         data-sfx="select"
         class="pixel-btn pixel-btn-secondary px-6 py-4 text-xs tracking-wider sm:text-sm"
       >
         🗺️ VER MAPA OTRA VEZ
-      </a>
+      </button>
     </div>
   </div>
 </section>

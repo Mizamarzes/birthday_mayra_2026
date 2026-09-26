@@ -12,7 +12,19 @@ const OPTION_LETTERS = ["A", "B", "C", "D"] as const;
 
 const el = <T extends HTMLElement>(id: string): T | null => document.getElementById(id) as T | null;
 
-export function initTrivia(): void {
+export interface TriviaController {
+  /** Vuelve a la pregunta 1 con las vidas llenas. */
+  restart(options?: { silent?: boolean }): void;
+  /** Salta directo a la pantalla de victoria (para revisitar la pantalla ya superada). */
+  showVictory(): void;
+}
+
+export interface TriviaOptions {
+  /** Se dispara al ganar, tanto por mérito como por el modo trampa. */
+  onWin: () => void;
+}
+
+export function initTrivia({ onWin }: TriviaOptions): TriviaController | null {
   const questionText = el("question-text");
   const questionCounter = el("question-counter");
   const optionsGrid = el("options-grid");
@@ -23,8 +35,8 @@ export function initTrivia(): void {
   const victoryScreen = el("victory-screen");
 
   // Si la sección no está en esta página, no hay nada que inicializar.
-  if (!questionText || !questionCounter || !optionsGrid || !gameScore || !feedback) return;
-  if (!gameOverScreen || !victoryScreen) return;
+  if (!questionText || !questionCounter || !optionsGrid || !gameScore || !feedback) return null;
+  if (!gameOverScreen || !victoryScreen) return null;
 
   let currentIdx = 0;
   let lives = TOTAL_LIVES;
@@ -55,9 +67,11 @@ export function initTrivia(): void {
     }, 1000);
   }
 
-  function showVictory() {
-    playSound("win");
+  function showVictory(options: { silent?: boolean } = {}) {
+    if (!options.silent) playSound("win");
+    gameOverScreen!.hidden = true;
     victoryScreen!.hidden = false;
+    onWin();
   }
 
   function loadQuestion(idx: number) {
@@ -136,36 +150,28 @@ export function initTrivia(): void {
     }, 1200);
   }
 
-  function restart() {
+  function restart({ silent = false }: { silent?: boolean } = {}) {
     lives = TOTAL_LIVES;
     score = 0;
     currentIdx = 0;
+    answerLocked = false;
+    clearTimeout(feedbackTimer);
+    feedback!.hidden = true;
     gameScore!.textContent = "0";
     if (hudScore) hudScore.textContent = String(player.baseScore);
     renderHearts();
     gameOverScreen!.hidden = true;
     victoryScreen!.hidden = true;
     loadQuestion(0);
-    playSound("start");
+    if (!silent) playSound("start");
   }
 
-  el<HTMLButtonElement>("btn-retry")?.addEventListener("click", restart);
+  el<HTMLButtonElement>("btn-retry")?.addEventListener("click", () => restart());
 
-  el<HTMLButtonElement>("btn-skip")?.addEventListener("click", () => {
-    gameOverScreen.hidden = true;
-    showVictory();
-  });
-
-  el<HTMLAnchorElement>("btn-unlock")?.addEventListener("click", () => {
-    playSound("correct");
-  });
-
-  // "Jugar de nuevo" desde la pantalla final: reinicia y vuelve arriba.
-  el<HTMLButtonElement>("btn-replay")?.addEventListener("click", () => {
-    restart();
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  });
+  el<HTMLButtonElement>("btn-skip")?.addEventListener("click", () => showVictory());
 
   renderHearts();
   loadQuestion(0);
+
+  return { restart, showVictory: () => showVictory({ silent: true }) };
 }

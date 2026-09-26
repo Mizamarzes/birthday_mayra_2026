@@ -219,6 +219,19 @@
       inset 4px 4px 0 #b269ff;
   }
 
+  /* Un botón bloqueado tiene que leerse como bloqueado, no como decorativo. */
+  .pixel-btn:disabled {
+    cursor: not-allowed;
+    background: var(--color-bezel);
+    color: var(--color-muted);
+    box-shadow:
+      4px 4px 0 #000,
+      inset -4px -4px 0 #150a26,
+      inset 4px 4px 0 #3b1f63;
+  }
+  .pixel-btn:disabled:hover { background: var(--color-bezel); }
+  .pixel-btn:disabled:active { transform: none; }
+
   .pixel-btn-secondary:hover { background: #7028db; }
 
   .pixel-btn-secondary:active {

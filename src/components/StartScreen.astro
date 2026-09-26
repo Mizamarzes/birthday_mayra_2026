@@ -11,8 +11,9 @@ const stars = [
 ---
 
 <section
-  id="start-screen"
-  class="pixel-box-inset relative mb-12 flex min-h-[580px] flex-col items-center justify-between overflow-hidden px-4 py-10 text-center md:min-h-[640px]"
+  data-screen="start"
+  hidden
+  class="pixel-box-inset relative flex min-h-[580px] flex-col items-center justify-between overflow-hidden px-4 py-10 text-center md:min-h-[640px]"
 >
   <!-- Fondo decorativo: estrellas y corazones flotantes -->
   <div class="pointer-events-none absolute inset-0 overflow-hidden opacity-40" aria-hidden="true">
@@ -85,13 +86,13 @@ const stars = [
     </div>
 
     <div class="mt-8 flex flex-col items-center gap-4 sm:flex-row">
-      <a
-        href="#album-section"
-        data-sfx="start"
+      <button
+        type="button"
+        data-continue="start"
         class="pixel-btn animate-pixel-blink px-6 py-4 text-xs tracking-widest sm:px-8 sm:text-sm md:text-base"
       >
         {intro.cta}
-      </a>
+      </button>
     </div>
     <span class="mt-3 font-ui text-[10px] text-muted">{intro.hint}</span>
   </div>

@@ -25,6 +25,17 @@ export const intro = {
   hint: "O deslizá hacia abajo con tu joystick ↓",
 } as const;
 
+/** Las cinco pantallas del recorrido, en orden. */
+export const stages = [
+  { id: "start", label: "INSERT COIN" },
+  { id: "album", label: "ÁLBUM DE LOGROS" },
+  { id: "map", label: "MAPA DE NIVELES" },
+  { id: "trivia", label: "MINIJUEGO" },
+  { id: "final", label: "TU REGALO" },
+] as const;
+
+export type StageId = (typeof stages)[number]["id"];
+
 /** Paleta de acento por rareza de ítem. */
 export type Rarity = "SSS" | "EPIC" | "RARE" | "COMMON" | "SPECIAL" | "LEGENDARY";
 

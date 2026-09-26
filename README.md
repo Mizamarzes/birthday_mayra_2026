@@ -1,6 +1,23 @@
 # birthday_mayra_2026
 
-**LOVE QUEST — 16-Bit Romantic Arcade.** Landing page de cumpleaños hecha con Astro + Tailwind v4.
+**LOVE QUEST — 16-Bit Romantic Arcade.** Página de cumpleaños hecha con Astro + Tailwind v4.
+
+## Cómo funciona
+
+No es una página con scroll: es un recorrido de **5 pantallas**, una por vez. Para pasar a la
+siguiente hay que completar la actual.
+
+| # | Pantalla | Qué hay que hacer |
+| :-- | :-- | :-- |
+| 1 | Inicio | Tocar PRESS START |
+| 2 | Álbum de logros | Inspeccionar los 6 ítems (cada uno revela su recuerdo) |
+| 3 | Mapa de niveles | Revelar los 4 hitos |
+| 4 | Minijuego | Ganar la trivia. Hay 3 vidas y un botón de "modo trampa" si se queda sin |
+| 5 | Tu regalo | El video y la dedicatoria |
+
+Los puntitos de arriba muestran en qué pantalla va y dejan volver a las ya superadas. El progreso se
+guarda en el navegador: si recarga o cierra la página, vuelve a donde estaba. Para empezar de cero
+está **↺ REINICIAR PARTIDA** en el pie (pide confirmación con un segundo toque).
 
 ## Dónde tocar el contenido
 
@@ -9,6 +26,7 @@ Todo el texto y los datos están quemados en **un solo archivo**: `src/data/site
 | Qué querés cambiar | Dónde |
 | :-- | :-- |
 | Nombre, quién firma, año, puntajes del HUD | `player` |
+| Nombre de cada pantalla en el indicador de etapa | `stages` |
 | Título, subtítulo y texto de la pantalla de inicio | `intro` |
 | Los 6 ítems del álbum (foto, título, lore, rareza) | `albumItems` |
 | Los 4 hitos del mapa de niveles | `mapNodes` |
@@ -35,6 +53,8 @@ Todo el texto y los datos están quemados en **un solo archivo**: `src/data/site
     ├── layouts/Layout.astro      <head>, fuentes, overlay CRT
     ├── pages/index.astro         Compone las secciones + engancha los scripts
     ├── scripts/
+    │   ├── screens.ts            Recorrido de pantallas y condiciones para avanzar
+    │   ├── progress.ts           Guardado del progreso en localStorage
     │   ├── sfx.ts                Sintetizador 8-bit (Web Audio, sin dependencias)
     │   └── trivia.ts             Lógica del minijuego
     └── styles/global.css         Tokens de diseño (@theme) y clases pixel

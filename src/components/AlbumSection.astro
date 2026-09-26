@@ -1,17 +1,18 @@
 ---
 import SectionBanner from "./SectionBanner.astro";
 import AlbumItemCard from "./AlbumItemCard.astro";
+import ContinueBar from "./ContinueBar.astro";
 import { albumItems } from "../data/site";
 ---
 
-<section id="album-section" class="mb-14 scroll-mt-6">
+<section data-screen="album" hidden>
   <SectionBanner
     emoji="🏆"
     title="Álbum de logros desbloqueados"
-    subtitle="Colección de ítems legendarios de nuestra historia juntos (Toca para inspeccionar)"
+    subtitle="Tocá cada ítem para inspeccionarlo. Cuando los descubras todos, se abre el próximo nivel."
   >
     <div slot="aside" class="ml-auto hidden items-center gap-1.5 font-ui text-xs text-tertiary sm:flex">
-      <span>{albumItems.length}/{albumItems.length} ITEMS</span>
+      <span><span data-counter="album">0</span>/{albumItems.length} ITEMS</span>
       <span class="inline-block h-3 w-3 border border-black bg-tertiary"></span>
     </div>
   </SectionBanner>
@@ -19,4 +20,6 @@ import { albumItems } from "../data/site";
   <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
     {albumItems.map((item) => <AlbumItemCard item={item} />)}
   </div>
+
+  <ContinueBar screen="album" label="CONTINUAR ▶" total={albumItems.length} unit="ITEMS" counter="album" />
 </section>

@@ -5,7 +5,7 @@ import { player, triviaQuestions } from "../data/site";
 const lives = [1, 2, 3];
 ---
 
-<section id="game-section" class="mb-14 scroll-mt-6">
+<section data-screen="trivia" hidden>
   <!-- Banner con barra de vidas -->
   <div
     class="mb-4 flex flex-wrap items-center justify-between gap-3 border-4 border-black bg-cabinet p-3 shadow-[4px_4px_0_#000]"
@@ -118,13 +118,13 @@ const lives = [1, 2, 3];
         Has demostrado un dominio legendario de nuestra historia. El jefe final ha sido derrotado y el
         regalo está listo para abrir.
       </p>
-      <a
-        href="#final-section"
-        id="btn-unlock"
-        class="pixel-btn pixel-btn-gold border-4 border-black px-8 py-4 text-xs tracking-wider sm:text-sm"
+      <button
+        type="button"
+        data-continue="trivia"
+        class="pixel-btn pixel-btn-gold animate-pixel-blink border-4 border-black px-8 py-4 text-xs tracking-wider sm:text-sm"
       >
         🎁 VER MI REGALO DESBLOQUEADO
-      </a>
+      </button>
     </div>
   </div>
 </section>

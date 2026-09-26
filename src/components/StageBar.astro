@@ -1,0 +1,56 @@
+---
+import { stages } from "../data/site";
+---
+
+<!-- Indicador de recorrido: un punto por pantalla. Los ya alcanzados son clickeables. -->
+<nav
+  class="flex flex-wrap items-center justify-between gap-3 border-b-4 border-black bg-inset px-4 py-2"
+  aria-label="Progreso del recorrido"
+>
+  <ol class="flex list-none items-center gap-2 p-0">
+    {
+      stages.map((stage, i) => (
+        <li class="flex items-center gap-2">
+          <button
+            type="button"
+            data-stage={stage.id}
+            disabled
+            aria-label={`Pantalla ${i + 1}: ${stage.label}`}
+            class="stage-dot h-4 w-4 border-2 border-black"
+          />
+          {i < stages.length - 1 && <span class="h-0.5 w-3 bg-edge" aria-hidden="true" />}
+        </li>
+      ))
+    }
+  </ol>
+
+  <span data-stage-label class="font-ui text-[10px] tracking-widest text-pastel">
+    PANTALLA 1 DE {stages.length} · {stages[0]?.label}
+  </span>
+</nav>
+
+<style>
+  /* El estado lo escribe el controlador en data-state. */
+  .stage-dot {
+    background: var(--color-bezel);
+    transition: transform 0.1s steps(2);
+  }
+  .stage-dot[data-state="locked"] {
+    background: var(--color-bezel);
+    opacity: 0.5;
+  }
+  .stage-dot[data-state="open"] {
+    background: var(--color-secondary-dark);
+  }
+  .stage-dot[data-state="cleared"] {
+    background: var(--color-tertiary);
+  }
+  .stage-dot[data-state="active"] {
+    background: var(--color-primary);
+    box-shadow: 0 0 0 2px #000, 0 0 0 4px var(--color-primary-light);
+    transform: scale(1.15);
+  }
+  .stage-dot:not(:disabled):hover {
+    transform: scale(1.25);
+  }
+</style>

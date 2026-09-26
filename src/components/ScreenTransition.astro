@@ -1,0 +1,23 @@
+---
+---
+
+<!-- Cortina entre pantallas: se muestra ~1s al superar una etapa. -->
+<div
+  data-transition
+  hidden
+  role="status"
+  aria-live="polite"
+  class="absolute inset-0 z-50 flex flex-col items-center justify-center gap-5 bg-ink/95 px-6 text-center"
+>
+  <span class="font-title text-lg tracking-widest text-tertiary drop-shadow-[3px_3px_0_#000] sm:text-2xl">
+    ★ STAGE CLEAR ★
+  </span>
+  <span data-transition-next class="font-ui text-xs tracking-widest text-pastel sm:text-sm"></span>
+  <div class="h-5 w-56 border-4 border-black bg-void p-0.5 sm:w-72">
+    <div
+      data-transition-bar
+      class="h-full w-0 bg-gradient-to-r from-primary via-secondary to-tertiary transition-[width] duration-1000 ease-linear"
+    >
+    </div>
+  </div>
+</div>

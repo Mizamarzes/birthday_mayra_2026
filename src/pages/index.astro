@@ -2,6 +2,8 @@
 import Layout from "../layouts/Layout.astro";
 import CabinetHeader from "../components/CabinetHeader.astro";
 import CabinetFooter from "../components/CabinetFooter.astro";
+import StageBar from "../components/StageBar.astro";
+import ScreenTransition from "../components/ScreenTransition.astro";
 import StartScreen from "../components/StartScreen.astro";
 import AlbumSection from "../components/AlbumSection.astro";
 import MapSection from "../components/MapSection.astro";
@@ -13,27 +15,41 @@ import { intro, player } from "../data/site";
 <Layout title={`${player.name} ★ ${intro.title}: Birthday Edition (16-Bit Retro Arcade)`}>
   <!-- Mueble del arcade -->
   <div
+    data-cabinet
     class="relative z-10 my-2 w-full max-w-5xl overflow-hidden border-[6px] border-black bg-screen shadow-[0_0_0_4px_#32195a,12px_12px_0px_#000] md:border-[10px]"
   >
     <CabinetHeader />
+    <StageBar />
 
     <div class="relative bg-screen p-3 sm:p-6 md:p-8">
+      <!-- Solo una de estas pantallas está visible a la vez. -->
       <StartScreen />
       <AlbumSection />
       <MapSection />
       <TriviaSection />
       <FinalSection />
+
       <CabinetFooter />
     </div>
+
+    <ScreenTransition />
   </div>
+
+  <noscript>
+    <p
+      class="mt-4 max-w-xl border-4 border-black bg-panel p-4 text-center font-ui text-xs text-pastel"
+    >
+      Este recorrido necesita JavaScript activado para avanzar entre pantallas.
+    </p>
+  </noscript>
 </Layout>
 
 <script>
   import { bindSfxTriggers, playSound, toggleMute } from "../scripts/sfx";
-  import { initTrivia } from "../scripts/trivia";
+  import { initScreens } from "../scripts/screens";
 
   bindSfxTriggers();
-  initTrivia();
+  initScreens();
 
   // Interruptor de sonido del HUD.
   const sfxToggle = document.getElementById("sfx-toggle");

@@ -1,0 +1,35 @@
+---
+import type { StageId } from "../data/site";
+
+interface Props {
+  /** Pantalla de la que sale este botón; el controlador decide a cuál va. */
+  screen: StageId;
+  label: string;
+  /** Si se pasa, muestra el contador "N / total" y el botón arranca deshabilitado. */
+  total?: number;
+  unit?: string;
+  /** Clave del contador: coincide con lo que guarda el progreso. */
+  counter?: "album" | "map";
+}
+
+const { screen, label, total, unit = "", counter } = Astro.props;
+---
+
+<div class="mt-10 flex flex-col items-center gap-3 border-t-2 border-edge pt-6 text-center">
+  {
+    counter && total && (
+      <p class="font-ui text-xs tracking-widest text-muted">
+        <span data-counter={counter} class="font-title text-sm text-tertiary">
+          0
+        </span>
+        <span> / {total} {unit}</span>
+      </p>
+    )
+  }
+
+  <button type="button" data-continue={screen} disabled class="pixel-btn px-8 py-4 text-xs tracking-widest sm:text-sm">
+    {label}
+  </button>
+
+  {counter && <p data-hint={counter} class="font-ui text-[10px] text-muted" />}
+</div>
